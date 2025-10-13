@@ -1,6 +1,7 @@
-import qr_scan
+import qr_create, qr_scan
 
 def main():
+    qr_scan.get_valid_ids_today()
     qr_scan.qr_code_scanner_with_validation()
 
 if __name__ == "__main__":
