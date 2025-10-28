@@ -3,7 +3,6 @@ import sqlalchemy as db
 import datetime
 import hashlib
 
-#import createQRCode #TODO: remove
 import program
 
 
