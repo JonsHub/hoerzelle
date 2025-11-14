@@ -4,7 +4,7 @@ from datetime import date
 import patient_download
 
 engine = patient_download.engine
-def save_patients(patients_list, save_directory="saved_patients"):
+def save_patients(patients_list, save_directory="hörzelle\\saved_patients"):
     os.makedirs(save_directory, exist_ok=True)
     file_path = os.path.join(save_directory, "patients.json")
     data_for_json = []
