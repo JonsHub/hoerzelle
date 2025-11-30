@@ -1,15 +1,12 @@
-import os
 import json
 from datetime import date
 import patient_database_download
 from pathlib import Path
 
-BASE_DIR = Path("hoerzelle")
-
 engine = patient_database_download.engine
-def save_patients(patients_list, save_directory=BASE_DIR / "saved_patients"):
-    os.makedirs(save_directory, exist_ok=True)
-    file_path = os.path.join(save_directory, "patients.json")
+def save_patients(patients_list, target_directory: Path):
+    target_directory.mkdir(parents=True, exist_ok=True)
+    file_path = target_directory / "patients.json"
     data_for_json = []
     
     for row in patients_list:
@@ -31,7 +28,7 @@ def save_patients(patients_list, save_directory=BASE_DIR / "saved_patients"):
         with open(file_path, "w") as f:
             json.dump(data_for_json, f, indent=4)
             print(f"""Datei erfolgreich gespeichert unter: {file_path}. 
-                  Es wurden {len(data_for_json)} Patient(en) gespeichert.""")
+                     Es wurden {len(data_for_json)} Patient(en) gespeichert.""")
             engine.dispose()
         return file_path
     except IOError as e:

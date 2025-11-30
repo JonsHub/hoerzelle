@@ -18,6 +18,5 @@ def download_patients():
         
         fetch_user = db.select(*columns_to_fetch)
         
-        results = connection.execute(fetch_user).mappings().all()
-        
+        results = connection.execute(fetch_user).mappings().all()     
     return results
