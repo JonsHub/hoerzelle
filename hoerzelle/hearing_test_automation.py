@@ -17,6 +17,11 @@ PRINT_DIALOG_COORDINATES = {
     'ok': (42, 236),
 }
 
+WINDOW_TITLES = {
+    'test_start': 'Testeinführung',
+    'test_end': 'Test beendet'
+}
+
 def check_if_ma33_is_in_focus() -> bool:
     try:
         foreground_window = win32gui.GetForegroundWindow()
@@ -83,6 +88,32 @@ def find_ma33_window_handle():
     
     return window_handles[0] if window_handles else None
 
+def check_if_instruction_window_exists(window_title: str) -> bool:
+    window_handle = win32gui.FindWindow(None, window_title)
+    return window_handle != 0 and window_handle is not None
+
+def wait_for_instruction_window_to_appear(window_title: str):
+    print(f"Waiting for window: '{window_title}'")
+    
+    while not check_if_instruction_window_exists(window_title):
+        print(f"  Still waiting...", end="\r")
+        time.sleep(0.5)
+    
+    print(f"\n  FOUND: '{window_title}'!")
+    time.sleep(1)
+
+def wait_for_audio_and_window_to_close(window_title: str, audio_duration: int):
+    print(f"Window '{window_title}' is visible. Waiting {audio_duration}s for audio instructions...")
+    time.sleep(audio_duration)
+    print(f"  Audio instructions finished ({audio_duration}s).")
+
+    print(f"Waiting for window to close: '{window_title}'")
+    while check_if_instruction_window_exists(window_title): 
+        print(f"  Window still open...", end="\r")
+        time.sleep(0.5)
+    
+    print(f"\n  CLOSED: '{window_title}'!")
+
 def click_button_relative_to_ma33_window(button_name: str) -> bool:
     window_handle = find_ma33_window_handle()
     
@@ -146,11 +177,23 @@ def execute_hearing_test_sequence():
     return True
 
 def test_waiting():
+    print("Waiting for test to start...")
+    wait_for_instruction_window_to_appear(WINDOW_TITLES['test_start'])
+    wait_for_audio_and_window_to_close(WINDOW_TITLES['test_start'], audio_duration=12)
+
+    print("\n" + "="*40)
+    print("--- TEST IS NOW RUNNING ---")
+    
+    print("Program pauses until the 'test_end' window appears...")
+    print("="*40)
+
+    wait_for_instruction_window_to_appear(WINDOW_TITLES['test_end'])
+    wait_for_audio_and_window_to_close(WINDOW_TITLES['test_end'], audio_duration=7)
+    print("Ready to save test!")
+    
     # TODO: Schalte Bildschirm irgendwie aus
-    # TODO: Warte bis der Test fertig ist
     # TODO: Vielleicht kündige Ohrwechsel an
     # TODO: Schalte Bildschirm wieder an
-    pass
 
 def finish_and_save_test():
     print("\n" + "=" * 60)
@@ -214,7 +257,8 @@ def finish_and_save_test():
 if __name__ == '__main__':
     try:
         #execute_hearing_test_sequence()
-        #test_waiting()
-        finish_and_save_test()
+        test_waiting()
+        time.sleep(1.5)
+        #finish_and_save_test()
     except KeyboardInterrupt:
         print("\n\nAborted!")
