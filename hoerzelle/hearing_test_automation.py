@@ -23,13 +23,17 @@ WINDOW_TITLES = {
 }
 
 def check_if_ma33_is_in_focus() -> bool:
-    try:
-        foreground_window = win32gui.GetForegroundWindow()
-        _, process_id = win32process.GetWindowThreadProcessId(foreground_window)
-        process = psutil.Process(process_id)
-        return process.name().lower() == 'ma33.exe'
-    except Exception:
-        return False
+    while True:
+        try:
+            foreground_window = win32gui.GetForegroundWindow()
+            _, process_id = win32process.GetWindowThreadProcessId(foreground_window)
+            process = psutil.Process(process_id)
+            if process.name().lower() == 'ma33.exe':
+                return True
+        except Exception:
+            pass
+        print("Waiting for MA33 to be in focus...", end="\r")
+        time.sleep(0.5)
 
 def check_if_ma33_is_running() -> bool:
     for process in psutil.process_iter(['name']):
@@ -143,18 +147,19 @@ def wait_until_ma33_starts():
         time.sleep(1)
     
     print("ma33.exe detected!")
-    time.sleep(2)
+    time.sleep(0.5)
 
 def execute_hearing_test_sequence():
+    
+    wait_until_ma33_starts()
+    pyautogui.press("enter")
+    
+    if not check_if_ma33_is_in_focus():
+        return False
+    
     print("\n" + "=" * 60)
     print("START HEARING TEST")
     print("=" * 60)
-    
-    if not check_if_ma33_is_in_focus():
-        print("ERROR: MA33 not in focus")
-        return False
-    
-    wait_until_ma33_starts()
 
     time.sleep(2)
     
@@ -174,8 +179,8 @@ def execute_hearing_test_sequence():
     print("Test is now running...")
     print("=" * 60)
     
-    return True
 
+    return True
 def test_waiting():
     print("Waiting for test to start...")
     wait_for_instruction_window_to_appear(WINDOW_TITLES['test_start'])
@@ -236,17 +241,17 @@ def finish_and_save_test():
     pyautogui.press('space')
     time.sleep(1)
     
-    # print("\nStep 6: Clicking Speichern und Beenden...")
-    # if not click_button_relative_to_ma33_window('speichern_beenden'):
-    #     print("FAILED")
-    #     return False
+    print("\nStep 6: Clicking Speichern und Beenden...")
+    if not click_button_relative_to_ma33_window('speichern_beenden'):
+        print("FAILED")
+        return False
     
-    # time.sleep(1)
+    time.sleep(1)
     
-    # print("\nStep 7: Clicking Ja (Messwerte übernehmen)...")
-    # if not click_button_relative_to_ma33_window('ja_uebernehmen'):
-    #     print("FAILED")
-    #     return False
+    print("\nStep 7: Clicking Ja (Messwerte übernehmen)...")
+    if not click_button_relative_to_ma33_window('ja_uebernehmen'):
+        print("FAILED")
+        return False
     
     print("\n" + "=" * 60)
     print("SUCCESS: Test saved and finished!")
@@ -254,11 +259,9 @@ def finish_and_save_test():
     
     return True
 
-if __name__ == '__main__':
-    try:
-        #execute_hearing_test_sequence()
-        test_waiting()
-        time.sleep(1.5)
-        #finish_and_save_test()
-    except KeyboardInterrupt:
-        print("\n\nAborted!")
+def runner():
+    execute_hearing_test_sequence()
+    test_waiting()
+    time.sleep(1.5)
+    finish_and_save_test()
+    return True

@@ -1,0 +1,11 @@
+2025-12-02 16:35:47,562 - INFO - Program started
+2025-12-02 16:35:47,562 - ERROR - JSON not found, calling PatientManager
+2025-12-02 16:35:48,109 - INFO - 1 patients loaded
+2025-12-02 16:35:48,109 - INFO - Waiting for maico32.exe
+2025-12-02 16:35:52,126 - INFO - maico32.exe started
+2025-12-02 16:35:55,129 - INFO - maico32.exe is in focus
+2025-12-02 16:35:57,129 - INFO - Processing patient 1/1
+2025-12-02 16:35:57,131 - INFO - Starting input for: Joselyn  Richard
+2025-12-02 16:36:03,235 - INFO - Input completed for: Joselyn  Richard
+2025-12-02 16:36:04,735 - INFO - Starting hearing test (F2)
+2025-12-02 16:36:10,940 - INFO - All patients entered successfully

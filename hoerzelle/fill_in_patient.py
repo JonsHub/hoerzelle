@@ -127,8 +127,6 @@ def enter_patient(patient: Dict[str, Any]) -> None:
     logging.info("Starting hearing test (F2)")
     pyautogui.press("F2")
     time.sleep(1.0)
-    pyautogui.press("enter")
-
 def run_automation():
     print("Program started")
     logging.info("Program started")
