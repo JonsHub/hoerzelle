@@ -152,7 +152,7 @@ def wait_until_ma33_starts():
 def execute_hearing_test_sequence():
     
     wait_until_ma33_starts()
-    pyautogui.press("enter")
+    pyautogui.press("space")
     
     if not check_if_ma33_is_in_focus():
         return False
