@@ -210,19 +210,28 @@ def finish_and_save_test():
         time.sleep(0.5)   
     wait_until_ma33_starts()
     
-    print("\nStep 1: Clicking Drucken button...")
+    print("\nClicking Drucken button...")
     if not click_button_relative_to_ma33_window('drucken'):
         print("FAILED")
         return False
     
-    print("\nStep 2: Print dialog opened, clicking OK...")
+    print("\nPrint dialog opened, clicking OK...")
     if not click_in_print_dialog('ok'):
         print("FAILED")
         return False
     
-    time.sleep(1)
+    time.sleep(1.5)
     
-    print("\nStep 3: Windows save dialog opened, entering name")
+    print("Access Folder")
+    pyautogui.hotkey("ctrl", "l")
+    time.sleep(0.5)
+    pyautogui.write("", interval=0.05) #TODO: add maico path
+    pyautogui.press("enter")
+    for i in range(7):
+        pyautogui.press("tab")
+        time.sleep(0.3)
+    
+    print("\nEntering test name")
     patient_data = generate_file_name.get_patient_data()
     
     if isinstance(patient_data, list) and len(patient_data) > 0:
@@ -230,25 +239,25 @@ def finish_and_save_test():
         time.sleep(1.5)
         generate_file_name.enter_filename(current_patient)
     
-    time.sleep(2)
+    time.sleep(1)
     
-    print("\nStep 4: 3x TAB to navigate to save button...")
+    print("\n3x TAB to navigate to save button...")
     for _ in range(3):
         pyautogui.press('tab')
         time.sleep(0.3)
     
-    print("\nStep 5: SPACE to save...")
+    print("\nSPACE to save...")
     pyautogui.press('space')
     time.sleep(1)
     
-    print("\nStep 6: Clicking Speichern und Beenden...")
+    print("\nClicking Speichern und Beenden...")
     if not click_button_relative_to_ma33_window('speichern_beenden'):
         print("FAILED")
         return False
     
     time.sleep(1)
     
-    print("\nStep 7: Clicking Ja (Messwerte übernehmen)...")
+    print("\nClicking Ja (Messwerte übernehmen)...")
     if not click_button_relative_to_ma33_window('ja_uebernehmen'):
         print("FAILED")
         return False
