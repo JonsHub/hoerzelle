@@ -120,18 +120,19 @@ def enter_patient(patient: Dict[str, Any]) -> None:
     pyautogui.press("space")
     time.sleep(0.5)
     
-    email = str(patient.get("email", ""))
-    if gender == "m":
-        for _ in range(7):
-            pyautogui.press("tab")
-            time.sleep(0.2)
-        pyautogui.write(email, interval=0.05)
-    else:
-        for _ in range(6):
-            pyautogui.press("tab")
-            time.sleep(0.2)
-        pyautogui.write(email, interval=0.05)
-    time.sleep(0.5)
+    # email = str(patient.get("email", ""))
+    # if gender == "m":
+    #     for _ in range(7):
+    #         pyautogui.press("tab")
+    #         time.sleep(0.2)
+    #     pyautogui.write(email, interval=0.05)
+    # else:
+    #     for _ in range(6):
+    #         pyautogui.press("tab")
+    #         time.sleep(0.2)
+    #     pyautogui.write(email, interval=0.05)
+    # time.sleep(0.5)
+    
     print(f"Input completed for: {patient_name}")
     logging.info(f"Input completed for: {patient_name}")
     time.sleep(1.5)
