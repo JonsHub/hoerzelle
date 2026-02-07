@@ -1,13 +1,13 @@
-import window_config
-import generate_file_name
-import gui_utils
+from gui import window_config
+from utils import generate_file_name
+from gui import gui_utils
 import time
 import pyautogui
-
 def execute_hearing_test_sequence():
     
     gui_utils.wait_until_ma33_starts()
-    pyautogui.press("space")
+    time.sleep(1.5)
+    pyautogui.press("space") #für update fenster weg
     
     if not gui_utils.check_if_ma33_is_in_focus():
         return False
@@ -49,7 +49,7 @@ def test_waiting():
     gui_utils.wait_for_instruction_window_to_appear(window_config.WINDOW_TITLES['test_end'])
     gui_utils.wait_for_audio_and_window_to_close(window_config.WINDOW_TITLES['test_end'], audio_duration=7)
     print("Ready to save test!")
-    
+    time.sleep(1)
     # TODO: Schalte Bildschirm irgendwie aus
     # TODO: Vielleicht kündige Ohrwechsel an
     # TODO: Schalte Bildschirm wieder an
@@ -70,18 +70,21 @@ def finish_and_save_test():
         return False
     
     print("\nPrint dialog opened, clicking OK...")
-    if not gui_utils.click_in_print_dialog('ok'):
-        print("FAILED")
-        return False
+    time.sleep(1)
+    for _ in range(2):
+        pyautogui.press("tab")
+        time.sleep(0.3)
+    print("\nPressing SPACE to confirm print...")
+    pyautogui.press("space")
     
     time.sleep(1.5)
-    
     print("Access Folder")
     pyautogui.hotkey("ctrl", "l")
     time.sleep(0.5)
-    pyautogui.write("", interval=0.05) #TODO: add maico path
+    print("Entering path to Maico folder...")
+    gui_utils.path_save_writer()
     pyautogui.press("enter")
-    for i in range(7):
+    for _ in range(7):
         pyautogui.press("tab")
         time.sleep(0.3)
     
@@ -115,7 +118,7 @@ def finish_and_save_test():
     if not gui_utils.click_button_relative_to_ma33_window('ja_uebernehmen'):
         print("FAILED")
         return False
-    
+    time.sleep(1)
     print("\n" + "=" * 60)
     print("SUCCESS: Test saved and finished!")
     print("=" * 60)

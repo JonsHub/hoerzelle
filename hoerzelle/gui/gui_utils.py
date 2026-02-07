@@ -4,6 +4,7 @@ import win32process
 import time
 import pyautogui
 import window_config
+import os
 
 def check_if_ma33_is_in_focus() -> bool:
     while True:
@@ -27,6 +28,12 @@ def check_if_ma33_is_running() -> bool:
             pass
     return False
 
+def ooga_booga_click():
+    time.sleep(3)
+    x,y = 950, 516
+    pyautogui.click(x, y)
+    time.sleep(0.2)
+    pyautogui.press("space")
 def find_print_dialog_window():
     def enum_callback(handle_window, window_handles):
         if win32gui.IsWindowVisible(handle_window):
@@ -39,28 +46,6 @@ def find_print_dialog_window():
     win32gui.EnumWindows(enum_callback, window_handles)
     
     return window_handles[0] if window_handles else None
-
-def click_in_print_dialog(button_name: str) -> bool:
-    window_handle = find_print_dialog_window()
-    
-    if not window_handle:
-        print(f"ERROR: Print dialog window not found")
-        return False
-    
-    if button_name not in window_config.PRINT_DIALOG_COORDINATES:
-        print(f"ERROR: Unknown button '{button_name}'")
-        return False
-    
-    window_x, window_y, _, _ = win32gui.GetWindowRect(window_handle)
-    relative_x, relative_y = window_config.PRINT_DIALOG_COORDINATES[button_name]
-    
-    absolute_x = window_x + relative_x
-    absolute_y = window_y + relative_y
-    
-    print(f"Clicking {button_name} in print dialog: window({window_x},{window_y}) + relative({relative_x},{relative_y}) = absolute({absolute_x},{absolute_y})")
-    
-    pyautogui.click(absolute_x, absolute_y)
-    return True
 
 def find_ma33_window_handle():
     def enum_callback(handle_window, window_handles):
@@ -130,4 +115,15 @@ def wait_until_ma33_starts():
         time.sleep(1)
     
     print("ma33.exe detected!")
-    time.sleep(0.5)
+    return True
+
+def path_save_writer():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    export_path = os.path.join(base_dir, "saved_tests")
+    if not os.path.exists(export_path):
+        os.makedirs(export_path)
+        print(f"Created export directory: {export_path}")
+        time.sleep(0.5)
+    print(f"Export path for test results: {export_path}")
+    pyautogui.write(export_path, interval=0.05)
+    return export_path

@@ -4,14 +4,15 @@ import pyautogui
 import win32gui
 import win32process
 import json
+import logging
+from gui import gui_utils
+from data import patient_manager
 from pathlib import Path
 from typing import Optional, List, Dict, Any
-import patient_manager
-import logging
 from datetime import datetime
 
 BASE_DIR = Path(".")
-SAVED_PATIENTS_DIR = BASE_DIR / "saved_patients"
+SAVED_PATIENTS_DIR = BASE_DIR / "data/saved_patients"
 PATIENTS_JSON = SAVED_PATIENTS_DIR / "patients.json"
 LOG_DIR = Path("log")
 
@@ -120,19 +121,6 @@ def enter_patient(patient: Dict[str, Any]) -> None:
     pyautogui.press("space")
     time.sleep(0.5)
     
-    # email = str(patient.get("email", ""))
-    # if gender == "m":
-    #     for _ in range(7):
-    #         pyautogui.press("tab")
-    #         time.sleep(0.2)
-    #     pyautogui.write(email, interval=0.05)
-    # else:
-    #     for _ in range(6):
-    #         pyautogui.press("tab")
-    #         time.sleep(0.2)
-    #     pyautogui.write(email, interval=0.05)
-    # time.sleep(0.5)
-    
     print(f"Input completed for: {patient_name}")
     logging.info(f"Input completed for: {patient_name}")
     time.sleep(1.5)
@@ -140,6 +128,9 @@ def enter_patient(patient: Dict[str, Any]) -> None:
     logging.info("Starting hearing test (F2)")
     pyautogui.press("F2")
     time.sleep(1.0)
+    
+    gui_utils.ooga_booga_click()
+    
 def run_automation():
     print("Program started")
     logging.info("Program started")

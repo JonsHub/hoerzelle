@@ -1,6 +1,6 @@
 import json
 from datetime import date
-import patient_database_download
+from core import patient_database_download
 from pathlib import Path
 
 engine = patient_database_download.engine

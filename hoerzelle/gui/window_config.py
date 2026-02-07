@@ -6,7 +6,6 @@ BUTTON_COORDINATES = {
     'ja_uebernehmen': (551, 547),
 }
 
-PRINT_DIALOG_COORDINATES = {'ok': (42, 236),}
 WINDOW_TITLES = {
     'test_start': 'Testeinführung',
     'test_end': 'Test beendet'
