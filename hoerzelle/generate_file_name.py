@@ -4,7 +4,7 @@ import json
 from typing import Dict, Any
 
 def get_patient_data() -> dict:
-    with open("saved_patients/patients.json", "r", encoding="utf-8") as file:
+    with open("data/saved_patients/patients.json", "r", encoding="utf-8") as file:
         patient_data = json.load(file)
     return patient_data
 

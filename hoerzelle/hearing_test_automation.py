@@ -50,9 +50,7 @@ def test_waiting():
     gui_utils.wait_for_audio_and_window_to_close(window_config.WINDOW_TITLES['test_end'], audio_duration=7)
     print("Ready to save test!")
     time.sleep(1)
-    # TODO: Schalte Bildschirm irgendwie aus
-    # TODO: Vielleicht kündige Ohrwechsel an
-    # TODO: Schalte Bildschirm wieder an
+
 
 def finish_and_save_test():
     print("\n" + "=" * 60)

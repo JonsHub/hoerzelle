@@ -3,3 +3,4 @@ pyautogui>=0.9.54
 pywin32>=311
 SQLAlchemy>=2.0.44
 qrcode>=8.2
+opencv-python>=4.11.0.86

@@ -14,7 +14,7 @@ from datetime import datetime
 BASE_DIR = Path(".")
 SAVED_PATIENTS_DIR = BASE_DIR / "data/saved_patients"
 PATIENTS_JSON = SAVED_PATIENTS_DIR / "patients.json"
-LOG_DIR = Path("log")
+LOG_DIR = Path("logs")
 
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 log_file = LOG_DIR / f"{datetime.now().strftime('%Y_%m_%d_%H_%M_%S')}.log"
