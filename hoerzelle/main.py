@@ -1,5 +1,5 @@
-from core import fill_in_patient
-from core import hearing_test_automation
+import fill_in_patient
+import hearing_test_automation
 
 def main():
     fill_in_patient.run_automation()

@@ -1,6 +1,6 @@
 import json
 from datetime import date
-from core import patient_database_download
+import patient_database_download
 from pathlib import Path
 
 engine = patient_database_download.engine
@@ -21,7 +21,8 @@ def save_patients(patients_list, target_directory: Path):
             "firstname": row['firstname'],
             "date_of_birth": formatted_date,
             "gender": row['gender'],
-            "email": row['email']
+            "email": row['email'],
+            "id": row['id']
         })
 
     try:

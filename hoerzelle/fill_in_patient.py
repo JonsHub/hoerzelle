@@ -5,8 +5,8 @@ import win32gui
 import win32process
 import json
 import logging
-from gui import gui_utils
-from data import patient_manager
+import gui_utils
+import patient_manager
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 from datetime import datetime

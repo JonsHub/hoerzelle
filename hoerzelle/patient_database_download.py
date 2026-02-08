@@ -13,7 +13,8 @@ def download_patients():
             user_table.columns.firstname,
             user_table.columns.date_of_birth, 
             user_table.columns.gender, 
-            user_table.columns.email
+            user_table.columns.email,
+            user_table.columns.id
         ]
         
         fetch_user = db.select(*columns_to_fetch)

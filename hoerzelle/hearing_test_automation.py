@@ -1,6 +1,6 @@
-from gui import window_config
-from utils import generate_file_name
-from gui import gui_utils
+import window_config
+import generate_file_name
+import gui_utils
 import time
 import pyautogui
 def execute_hearing_test_sequence():

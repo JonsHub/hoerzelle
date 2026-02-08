@@ -1,1 +1,0 @@
-# generates from still to defined DB aspects a patient QR code
