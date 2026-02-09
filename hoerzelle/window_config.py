@@ -1,4 +1,5 @@
 BUTTON_COORDINATES = {
+    'nachname': (367, 235),
     'autotest': (633, 74),
     'play': (593, 761),
     'drucken': (885, 885),

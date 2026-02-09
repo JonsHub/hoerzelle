@@ -4,7 +4,6 @@ import gui_utils
 import time
 import pyautogui
 def execute_hearing_test_sequence():
-    
     gui_utils.wait_until_ma33_starts()
     time.sleep(1.5)
     pyautogui.press("space") #für update fenster weg

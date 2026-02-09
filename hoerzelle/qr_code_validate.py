@@ -1,6 +1,7 @@
 import cv2
 import json
 import hashlib
+import patient_manager
 from pathlib import Path
 
 BASE_DIR = Path(".")
@@ -12,6 +13,10 @@ def generate_hash(user_id):
     return hashlib.sha256(payload.encode()).hexdigest()
 
 def check_qr_code():
+    if not JSON_FILE.exists():
+        print(f"Error: JSON file not found at {JSON_FILE}. Calling patient_manager to download patients.")
+        patient_manager.get_all_patients()
+        
     with open(JSON_FILE, "r") as file:
         patients = json.load(file)
     

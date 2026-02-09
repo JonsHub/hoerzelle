@@ -5,10 +5,6 @@ import time
 import pyautogui
 import window_config
 import os
-from pathlib import Path
-
-
-
 def check_if_ma33_is_in_focus() -> bool:
     while True:
         try:

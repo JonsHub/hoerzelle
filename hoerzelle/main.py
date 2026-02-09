@@ -1,27 +1,26 @@
 import fill_in_patient
 import hearing_test_automation
 import qr_code_validate
+import test_start_gui
 
 def main():
     try:
         is_valid = qr_code_validate.check_qr_code()
-    except KeyboardInterrupt:
-        print("Program interrupted by user. Exiting.")
-        return
     except Exception as exception:
-        print(f"Error during QR code validation: {exception}. Exiting.")
+        print(f"Error validating QR code: {exception}")
         return
-    if is_valid:
-        print("QR Code validation successful. Starting automation...")
-        try:
-            fill_in_patient.run_automation()
-            hearing_test_automation.runner()
-        except KeyboardInterrupt:
-            print("Program interrupted by user. Exiting.")
-            return
-        except Exception as exception:
-            print(f"Error during automation: {exception}. Exiting.")
-            return
+    if not is_valid:
+        return
+    
+    start_screen = test_start_gui.PatientStartScreen()
+    start_screen.run()
 
+    try:
+        fill_in_patient.run_automation()
+        hearing_test_automation.runner()
+    except Exception as exception:
+        print(f"Error during test execution: {exception}")
+        return
+        
 if __name__ == "__main__":
     main()
