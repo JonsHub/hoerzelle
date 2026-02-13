@@ -3,9 +3,16 @@ import generate_file_name
 import gui_utils
 import time
 import pyautogui
+import os
+import shutil
+from datetime import datetime
+from pathlib import Path
+
+BASE_DIR = Path(".")
+XML_SAVE = BASE_DIR / "data" / "xml_port"
+ARCHIVE_PATH = BASE_DIR / "data" / "saved_tests"
 def execute_hearing_test_sequence():
     gui_utils.wait_until_ma33_starts()
-    time.sleep(1.5)
     pyautogui.press("space") #für update fenster weg
     
     if not gui_utils.check_if_ma33_is_in_focus():
@@ -121,6 +128,19 @@ def finish_and_save_test():
     print("=" * 60)
     
     return True
+
+def archive_xml():
+    try:
+        xml = BASE_DIR / "data" / "xml_port" / "out.xml"
+        timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+        xml = xml.rename(xml.with_suffix(f".{timestamp}.xml"))
+        shutil.move(str(xml), str(ARCHIVE_PATH))
+        print(f"XML saved to Archive")
+        print("Ready for next test...")
+        return True
+    except Exception as e:
+        print(f"Error archiving XML: {e}")
+        return False
 
 def runner():
     execute_hearing_test_sequence()

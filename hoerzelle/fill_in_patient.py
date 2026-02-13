@@ -10,11 +10,14 @@ import patient_manager
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 from datetime import datetime
+from xml.dom import minidom
+
 
 BASE_DIR = Path(".")
-SAVED_PATIENTS_DIR = BASE_DIR / "data/saved_patients"
+SAVED_PATIENTS_DIR = BASE_DIR / "data" / "saved_patients"
 PATIENTS_JSON = SAVED_PATIENTS_DIR / "patients.json"
 LOG_DIR = Path("logs")
+XML_FILE_PATH = BASE_DIR / "data" / "xml_port" / "in.xml"
 
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 log_file = LOG_DIR / f"{datetime.now().strftime('%Y_%m_%d_%H_%M_%S')}.log"
@@ -23,8 +26,6 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
-
-pyautogui.PAUSE = 0.2
 
 def is_maico_running() -> bool:
     for process in psutil.process_iter(['name']):
@@ -80,6 +81,60 @@ def load_patients() -> Optional[List[dict[str, Any]]]:
         logging.error(f'Error loading patient JSON: {e}')
         return None
 
+def create_xml_for_patient(patient: Dict[str, Any]) -> None:
+    """Erstellt XML-Datei für den Patienten BEVOR der Test startet"""
+    try:
+        date_of_birth_string = str(patient.get("date_of_birth"))
+        temp_date = datetime.strptime(date_of_birth_string, "%d.%m.%Y")
+        formatted_date = temp_date.strftime("%Y%m%d")
+        
+        sex = 1 if str(patient.get("gender")).lower() == "m" else 0
+        
+        last_name = patient.get("lastname")
+        first_name = patient.get("firstname")
+        
+        print("Hole Patienten-ID aus Maske...")
+        logging.info("Hole Patienten-ID aus Maske...")
+        patient_id = gui_utils.get_patient_id()
+        print(f"ID gefunden: {patient_id}")
+        logging.info(f"ID gefunden: {patient_id}")
+        
+        document = minidom.Document()
+        root = document.createElement("patient")
+        document.appendChild(root)
+        
+        id_element = document.createElement("idpatient")
+        id_element.appendChild(document.createTextNode(str(patient_id)))
+        root.appendChild(id_element)
+        
+        dob_element = document.createElement("datedenaissance")
+        dob_element.appendChild(document.createTextNode(formatted_date))
+        root.appendChild(dob_element)
+        
+        last_name_element = document.createElement("nom")
+        last_name_element.appendChild(document.createTextNode(str(last_name)))
+        root.appendChild(last_name_element)
+        
+        first_name_element = document.createElement("prenom")
+        first_name_element.appendChild(document.createTextNode(str(first_name)))
+        root.appendChild(first_name_element)
+        
+        sex_element = document.createElement("sexe")
+        sex_element.appendChild(document.createTextNode(str(sex)))
+        root.appendChild(sex_element)
+        
+        xml_content = document.toprettyxml(indent="  ", encoding="UTF-8").decode("UTF-8")
+        
+        with open(XML_FILE_PATH, "w", encoding="UTF-8") as file:
+            file.write(xml_content)
+        
+        print(f"XML erfolgreich erstellt: {XML_FILE_PATH}")
+        logging.info(f"XML erfolgreich erstellt: {XML_FILE_PATH}")
+        
+    except Exception as e:
+        print(f"FEHLER beim XML erstellen: {e}")
+        logging.error(f"FEHLER beim XML erstellen: {e}", exc_info=True)
+
 def enter_patient(patient: Dict[str, Any]) -> None:
     if not is_maico_in_focus():
         print("MAICO not in focus, waiting again.")
@@ -116,21 +171,33 @@ def enter_patient(patient: Dict[str, Any]) -> None:
     
     if gender == "w":
         pyautogui.press("tab")
+        pyautogui.press("space")
         time.sleep(0.3)
+        for _ in range(15):
+            pyautogui.press("tab", interval=0.1)
+        pyautogui.press("space")
+        pyautogui.press("space")
     
-    pyautogui.press("space")
-    time.sleep(0.5)
+    else:
+        pyautogui.press("space")
+        time.sleep(0.5)
+        for _ in range(16):
+            pyautogui.press("tab", interval=0.1)
+        pyautogui.press("space")
+        pyautogui.press("space")
     
     print(f"Input completed for: {patient_name}")
     logging.info(f"Input completed for: {patient_name}")
-    time.sleep(1.5)
-    print("Starting hearing test (F2)")
+    time.sleep(2)
+    
+    create_xml_for_patient(patient)
+    time.sleep(3)
+    
+    print("Everything done! Starting hearing test (F2)")
     logging.info("Starting hearing test (F2)")
     pyautogui.press("F2")
     time.sleep(1.0)
-    
-    gui_utils.ooga_booga_click()
-    
+        
 def run_automation():
     print("Program started")
     logging.info("Program started")
@@ -172,3 +239,4 @@ def run_automation():
     except Exception as error:
         print(f"Critical error: {error}")
         logging.error(f"Critical error: {error}", exc_info=True)
+    return None

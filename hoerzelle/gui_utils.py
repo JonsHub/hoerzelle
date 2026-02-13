@@ -1,4 +1,5 @@
 import psutil
+import pyperclip
 import win32gui
 import win32process
 import time
@@ -27,12 +28,15 @@ def check_if_ma33_is_running() -> bool:
             pass
     return False
 
-def ooga_booga_click():
-    time.sleep(3)
-    x,y = 950, 516
-    pyautogui.click(x, y)
-    time.sleep(0.2)
-    pyautogui.press("space")
+def get_patient_id():
+    pyautogui.click(x=1376, y=732)
+    time.sleep(0.1)
+    pyautogui.doubleClick()
+    time.sleep(0.05)
+    pyautogui.hotkey('ctrl', 'c')
+    time.sleep(0.1)
+    patienten_id = pyperclip.paste().strip()
+    return patienten_id
 def find_print_dialog_window():
     def enum_callback(handle_window, window_handles):
         if win32gui.IsWindowVisible(handle_window):
