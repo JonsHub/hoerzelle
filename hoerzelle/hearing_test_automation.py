@@ -131,15 +131,18 @@ def finish_and_save_test():
 
 def archive_xml():
     try:
-        xml = BASE_DIR / "data" / "xml_port" / "out.xml"
+        xml_source = BASE_DIR / "data" / "xml_port" / "out.xml"
+        if not xml_source.exists():
+            print("No XML file found to archive.")
+            return False
         timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        xml = xml.rename(xml.with_suffix(f".{timestamp}.xml"))
-        shutil.move(str(xml), str(ARCHIVE_PATH))
-        print(f"XML saved to Archive")
-        print("Ready for next test...")
+        new_xml = f"out_{timestamp}.xml"
+        destination = Path(ARCHIVE_PATH) / new_xml
+        shutil.move(str(xml_source), str(destination))
+        print(f"XML file archived to: {destination}")
         return True
     except Exception as e:
-        print(f"Error archiving XML: {e}")
+        print(f"Error archiving XML file: {e}")
         return False
 
 def runner():
@@ -147,4 +150,6 @@ def runner():
     test_waiting()
     time.sleep(1.5)
     finish_and_save_test()
+    time.sleep(4)
+    archive_xml()
     return True

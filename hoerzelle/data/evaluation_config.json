@@ -1,0 +1,17 @@
+{
+    "override_thresholds": {
+        "min_red_count": 3,
+        "min_yellow_db_any": 60
+    },
+    "pta4_thresholds": {
+        "green_max": 25,
+        "yellow_max": 40
+    },
+    "special_thresholds": {
+        "make_yellow_even_if_green_max_count": 2,
+        "make_red_even_if_yellow_max_count": 2
+    },
+    "additional_warning_flag": {
+        "high_frequency_max_yellow_count": 2
+    }
+}
