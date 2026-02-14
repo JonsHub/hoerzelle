@@ -3,14 +3,11 @@ import generate_file_name
 import gui_utils
 import time
 import pyautogui
-import os
 import shutil
+import paths
 from datetime import datetime
-from pathlib import Path
 
-BASE_DIR = Path(".")
-XML_SAVE = BASE_DIR / "data" / "xml_port"
-ARCHIVE_PATH = BASE_DIR / "data" / "saved_tests"
+
 def execute_hearing_test_sequence():
     gui_utils.wait_until_ma33_starts()
     pyautogui.press("space") #für update fenster weg
@@ -68,7 +65,7 @@ def finish_and_save_test():
         time.sleep(0.5)   
     gui_utils.wait_until_ma33_starts()
     
-    print("\nClicking Drucken button...")
+    """print("\nClicking Drucken button...")
     if not gui_utils.click_button_relative_to_ma33_window('drucken'):
         print("FAILED")
         return False
@@ -109,7 +106,7 @@ def finish_and_save_test():
     
     print("\nSPACE to save...")
     pyautogui.press('space')
-    time.sleep(1)
+    time.sleep(1)"""
     
     print("\nClicking Speichern und Beenden...")
     if not gui_utils.click_button_relative_to_ma33_window('speichern_beenden'):
@@ -130,20 +127,8 @@ def finish_and_save_test():
     return True
 
 def archive_xml():
-    try:
-        xml_source = BASE_DIR / "data" / "xml_port" / "out.xml"
-        if not xml_source.exists():
-            print("No XML file found to archive.")
-            return False
-        timestamp = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        new_xml = f"out_{timestamp}.xml"
-        destination = Path(ARCHIVE_PATH) / new_xml
-        shutil.move(str(xml_source), str(destination))
-        print(f"XML file archived to: {destination}")
-        return True
-    except Exception as e:
-        print(f"Error archiving XML file: {e}")
-        return False
+    #TODO
+    pass
 
 def runner():
     execute_hearing_test_sequence()

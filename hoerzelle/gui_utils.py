@@ -5,7 +5,7 @@ import win32process
 import time
 import pyautogui
 import window_config
-import os
+from paths import SAVED_TESTS_DIR
 def check_if_ma33_is_in_focus() -> bool:
     while True:
         try:
@@ -121,12 +121,4 @@ def wait_until_ma33_starts():
     return True
 
 def path_save_writer():
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    export_path = os.path.join(base_dir, "data", "saved_tests")
-    if not os.path.exists(export_path):
-        os.makedirs(export_path)
-        print(f"Created export directory: {export_path}")
-        time.sleep(0.5)
-    print(f"Export path for test results: {export_path}")
-    pyautogui.write(export_path, interval=0.05)
-    return export_path
+    return str(SAVED_TESTS_DIR.resolve())

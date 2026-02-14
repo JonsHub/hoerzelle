@@ -1,11 +1,9 @@
 import cv2
 import json
 import hashlib
+import paths
 import patient_manager
-from pathlib import Path
 
-BASE_DIR = Path(".")
-JSON_FILE = BASE_DIR / "data" / "saved_patients" / "patients.json"
 SALT = "blackberry pancake bake"
 
 def generate_hash(user_id):
@@ -13,11 +11,11 @@ def generate_hash(user_id):
     return hashlib.sha256(payload.encode()).hexdigest()
 
 def check_qr_code():
-    if not JSON_FILE.exists():
-        print(f"Error: JSON file not found at {JSON_FILE}. Calling patient_manager to download patients.")
+    if not paths.JSON_FILE.exists():
+        print(f"Error: JSON file not found at {paths.JSON_FILE}. Calling patient_manager to download patients.")
         patient_manager.get_all_patients()
         
-    with open(JSON_FILE, "r") as file:
+    with open(paths.JSON_FILE, "r") as file:
         patients = json.load(file)
     
     valid_hashes = {}

@@ -20,6 +20,7 @@ class PatientStartScreen:
                  "Der Test beginnt, sobald Sie auf Start klicken.\n"
                  "Stellen Sie sicher, dass Sie angenehm sitzen.\n\n"
                  "Setzen Sie die Kopfhörer auf und nehmen Sie den Taster.\n"
+                 "Bitte drücken Sie nicht auf Gefühl, sondern nur, wenn Sie explizit einen Ton hören.\n\n"
                  "Die rote Köpfhörerseite ist für das rechte Ohr. Der Test startet rechts.\n\n"
                  "Dauer: ca. 10 Minuten. Viel Erfolg!",
             font=self.title_font,

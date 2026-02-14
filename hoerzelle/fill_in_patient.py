@@ -7,20 +7,14 @@ import json
 import logging
 import gui_utils
 import patient_manager
-from pathlib import Path
+import paths
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from xml.dom import minidom
 
+paths.LOG_DIR.mkdir(parents=True, exist_ok=True)
+log_file = paths.LOG_DIR / f"{datetime.now().strftime('%Y_%m_%d_%H_%M_%S')}.log"
 
-BASE_DIR = Path(".")
-SAVED_PATIENTS_DIR = BASE_DIR / "data" / "saved_patients"
-PATIENTS_JSON = SAVED_PATIENTS_DIR / "patients.json"
-LOG_DIR = Path("logs")
-XML_FILE_PATH = BASE_DIR / "data" / "xml_port" / "in.xml"
-
-LOG_DIR.mkdir(parents=True, exist_ok=True)
-log_file = LOG_DIR / f"{datetime.now().strftime('%Y_%m_%d_%H_%M_%S')}.log"
 logging.basicConfig(
     filename=log_file,
     level=logging.INFO,
@@ -64,17 +58,17 @@ def wait_for_maico() -> bool:
     return True
 
 def load_patients() -> Optional[List[dict[str, Any]]]:
-    if not PATIENTS_JSON.exists():
+    if not paths.JSON_FILE.exists():
         print("JSON not found, calling PatientManager")
         logging.error('JSON not found, calling PatientManager')
-        SAVED_PATIENTS_DIR.mkdir(parents=True, exist_ok=True)
+        paths.SAVED_PATIENTS_DIR.mkdir(parents=True, exist_ok=True)
         patient_manager.get_all_patients()
         
-        if not PATIENTS_JSON.exists():
+        if not paths.SAVED_PATIENTS_DIR.exists():
             return None
     
     try:
-        with open(PATIENTS_JSON, 'r', encoding='utf-8') as file:
+        with open(paths.JSON_FILE, 'r', encoding='utf-8') as file:
             return json.load(file)
     except Exception as e:
         print(f"Error loading patient JSON: {e}")
@@ -125,11 +119,11 @@ def create_xml_for_patient(patient: Dict[str, Any]) -> None:
         
         xml_content = document.toprettyxml(indent="  ", encoding="UTF-8").decode("UTF-8")
         
-        with open(XML_FILE_PATH, "w", encoding="UTF-8") as file:
+        with open(paths.IN_XML, "w", encoding="UTF-8") as file:
             file.write(xml_content)
         
-        print(f"XML erfolgreich erstellt: {XML_FILE_PATH}")
-        logging.info(f"XML erfolgreich erstellt: {XML_FILE_PATH}")
+        print(f"XML erfolgreich erstellt: {paths.XML_PORT}")
+        logging.info(f"XML erfolgreich erstellt: {paths.XML_PORT}")
         
     except Exception as e:
         print(f"FEHLER beim XML erstellen: {e}")

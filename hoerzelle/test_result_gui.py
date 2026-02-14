@@ -1,6 +1,6 @@
 import tkinter as tk
+import paths
 from tkinter import font as tkfont
-from pathlib import Path
 
 class EvaluationGUI:
     def __init__(self, left_result, right_result, high_freq_warning_left=False, high_freq_warning_right=False):
@@ -14,7 +14,7 @@ class EvaluationGUI:
         self.high_freq_warning_left = high_freq_warning_left
         self.high_freq_warning_right = high_freq_warning_right
         
-        self.images_dir = Path("images")
+        self.images_dir = paths.IMAGES_DIR
         self.traffic_light_images = {
             "red": tk.PhotoImage(file=self.images_dir / "ampel_rot.png"),
             "yellow": tk.PhotoImage(file=self.images_dir / "ampel_gelb.png"),
@@ -348,13 +348,3 @@ class EvaluationGUI:
     def run(self):
         self.root.mainloop()
         return True
-    
-if __name__ == "__main__":
-    gui = EvaluationGUI(
-        left_result="yellow",
-        right_result="red",
-        high_freq_warning_left=False,
-        high_freq_warning_right=True,
-    )
-    gui.run()
-

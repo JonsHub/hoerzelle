@@ -1,10 +1,9 @@
 import json
 from datetime import date
 import patient_database_download
-from pathlib import Path
-
+import paths
 engine = patient_database_download.engine
-def save_patients(patients_list, target_directory: Path):
+def save_patients(patients_list, target_directory = paths.SAVED_PATIENTS_DIR):
     target_directory.mkdir(parents=True, exist_ok=True)
     file_path = target_directory / "patients.json"
     data_for_json = []
