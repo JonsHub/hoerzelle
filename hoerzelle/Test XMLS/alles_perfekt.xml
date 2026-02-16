@@ -1,0 +1,35 @@
+<patient>
+    <idpatient>1000018</idpatient>
+    <datedenaissance>20040216</datedenaissance>
+    <nom>Rahm</nom>
+    <prenom>Jonas</prenom>
+    <sexe>1</sexe>
+    <audio>
+        <test type="manual" ear="left" device="MA33">
+            <result frequency="125" volume="0" />
+            <result frequency="250" volume="0" />
+            <result frequency="500" volume="0" />
+            <result frequency="750" volume="0" />
+            <result frequency="1000" volume="0" />
+            <result frequency="1500" volume="0" />
+            <result frequency="2000" volume="0" />
+            <result frequency="3000" volume="0" />
+            <result frequency="4000" volume="0" />
+            <result frequency="6000" volume="0" />
+            <result frequency="8000" volume="0" />
+        </test>
+        <test type="manual" ear="right" device="MA33">
+            <result frequency="125" volume="0" />
+            <result frequency="250" volume="0" />
+            <result frequency="500" volume="0" />
+            <result frequency="750" volume="0" />
+            <result frequency="1000" volume="0" />
+            <result frequency="1500" volume="0" />
+            <result frequency="2000" volume="0" />
+            <result frequency="3000" volume="0" />
+            <result frequency="4000" volume="0" />
+            <result frequency="6000" volume="0" />
+            <result frequency="8000" volume="0" />
+        </test>
+    </audio>
+</patient>

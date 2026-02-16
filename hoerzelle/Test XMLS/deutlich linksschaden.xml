@@ -1,0 +1,21 @@
+<patient>
+    <idpatient>1000018</idpatient>
+    <datedenaissance>20040216</datedenaissance>
+    <nom>Rahm</nom>
+    <prenom>Jonas</prenom>
+    <sexe>1</sexe>
+    <audio>
+        <test type="manual" ear="left" device="MA33">
+            <result frequency="500" volume="45" />
+            <result frequency="1000" volume="50" />
+            <result frequency="2000" volume="55" />
+            <result frequency="4000" volume="60" />
+        </test>
+        <test type="manual" ear="right" device="MA33">
+            <result frequency="500" volume="10" />
+            <result frequency="1000" volume="15" />
+            <result frequency="2000" volume="20" />
+            <result frequency="4000" volume="20" />
+        </test>
+    </audio>
+</patient>

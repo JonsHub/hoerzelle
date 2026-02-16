@@ -41,10 +41,12 @@ def main():
         high_freq_warning_right=results['right']['high_freq_warning']
     )
     gui.run()
-    
-    
-def test_export():
-    from hearing_test_automation import archive_xml
-    archive_xml() #TODO: fix folder logic test if test works and moves xml to correct folder
+    try:
+        hearing_test_automation.rename_xml_file()
+    except Exception as exception:
+        print(f"Error renaming XML file: {exception}")
+        return False
+    return True
+
 if __name__ == "__main__":
-    test_export()
+    main()

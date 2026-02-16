@@ -125,16 +125,17 @@ def finish_and_save_test():
     print("=" * 60)
     
     return True
-
-def archive_xml():
-    #TODO
-    pass
-
+    
+def rename_xml_file():
+    namestamp = generate_file_name.create_filename_from_patient(generate_file_name.get_patient_data())
+    saved_tests_dir = paths.SAVED_TESTS_DIR
+    out_xml_files = list(saved_tests_dir.glob("out.xml"))
+    for file in out_xml_files:
+        new_filename = f"{file.stem}_{namestamp}.xml"
+        shutil.move(str(file), str(saved_tests_dir / new_filename))
 def runner():
     execute_hearing_test_sequence()
     test_waiting()
     time.sleep(1.5)
     finish_and_save_test()
-    time.sleep(4)
-    archive_xml()
     return True
