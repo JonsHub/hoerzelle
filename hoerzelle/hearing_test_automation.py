@@ -5,11 +5,11 @@ import time
 import pyautogui
 import shutil
 import paths
-from datetime import datetime
-
+from gui_utils import TestBlackScreen
 
 def execute_hearing_test_sequence():
     gui_utils.wait_until_ma33_starts()
+    time.sleep(4)
     pyautogui.press("space") #für update fenster weg
     
     if not gui_utils.check_if_ma33_is_in_focus():
@@ -48,6 +48,9 @@ def test_waiting():
     
     print("Program pauses until the 'test_end' window appears...")
     print("="*40)
+    
+    blackscreen = TestBlackScreen()
+    blackscreen.run()
 
     gui_utils.wait_for_instruction_window_to_appear(window_config.WINDOW_TITLES['test_end'])
     gui_utils.wait_for_audio_and_window_to_close(window_config.WINDOW_TITLES['test_end'], audio_duration=7)

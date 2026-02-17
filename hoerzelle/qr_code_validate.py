@@ -29,8 +29,8 @@ def check_qr_code():
     cap = cv2.VideoCapture(0)
     
     cap.set(cv2.CAP_PROP_AUTOFOCUS, 1)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1600)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 900)
     cap.set(cv2.CAP_PROP_FPS, 30)
     detector = cv2.QRCodeDetector()
     

@@ -208,8 +208,10 @@ def run_automation():
     logging.info(f"{total_patients} patients loaded")
     
     try:
+        pyautogui.leftClick(1600,100)
         if wait_for_maico():
             time.sleep(2)
+            
             
             for patient_number, patient in enumerate(patients, 1):
                 print(f"Processing patient {patient_number}/{total_patients}")

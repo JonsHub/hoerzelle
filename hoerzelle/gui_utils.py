@@ -4,8 +4,8 @@ import win32gui
 import win32process
 import time
 import pyautogui
+import tkinter as tk
 import window_config
-from paths import SAVED_TESTS_DIR
 def check_if_ma33_is_in_focus() -> bool:
     while True:
         try:
@@ -120,5 +120,30 @@ def wait_until_ma33_starts():
     print("ma33.exe detected!")
     return True
 
-def path_save_writer():
-    return str(SAVED_TESTS_DIR.resolve())
+class TestBlackScreen:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("Testvorgang")
+        self.root.attributes("-fullscreen", True)
+        self.root.attributes("-topmost", True)
+        self.root.configure(bg="black")
+        self.label = tk.Label(
+            self.root, 
+            text="Testvorgang läuft...", 
+            font=("Arial", 49), 
+            foreground="white", 
+            background="black"
+        )
+        self.label.pack(fill=tk.BOTH, expand=True)
+        self._running = True
+
+    def check_and_close(self):
+        if check_if_instruction_window_exists(window_config.WINDOW_TITLES['test_end']):
+            self._running = False
+            self.root.destroy()
+        else:
+            self.root.after(500, self.check_and_close)
+
+    def run(self):
+        self.root.after(500, self.check_and_close)
+        self.root.mainloop()
