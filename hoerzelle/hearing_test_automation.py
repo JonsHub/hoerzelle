@@ -67,7 +67,7 @@ def finish_and_save_test():
         time.sleep(0.5)   
     gui_utils.wait_until_ma33_starts()
     
-    """print("\nClicking Drucken button...")
+    print("\nClicking Drucken button...")
     if not gui_utils.click_button_relative_to_ma33_window('drucken'):
         print("FAILED")
         return False
@@ -108,7 +108,7 @@ def finish_and_save_test():
     
     print("\nSPACE to save...")
     pyautogui.press('space')
-    time.sleep(1)"""
+    time.sleep(1)
     
     print("\nClicking Speichern und Beenden...")
     if not gui_utils.click_button_relative_to_ma33_window('speichern_beenden'):
