@@ -51,7 +51,6 @@ def test_waiting():
     
     blackscreen = TestBlackScreen()
     blackscreen.run()
-
     gui_utils.wait_for_instruction_window_to_appear(window_config.WINDOW_TITLES['test_end'])
     gui_utils.wait_for_audio_and_window_to_close(window_config.WINDOW_TITLES['test_end'], audio_duration=7)
     print("Ready to save test!")

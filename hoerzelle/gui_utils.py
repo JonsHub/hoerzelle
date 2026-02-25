@@ -136,6 +136,11 @@ class TestBlackScreen:
         )
         self.label.pack(fill=tk.BOTH, expand=True)
         self._running = True
+        self.root.bind("<Key-q>", lambda e: self.terminate_gui())
+
+    def terminate_gui(self):
+        self._running = False
+        self.root.destroy()
 
     def check_and_close(self):
         if check_if_instruction_window_exists(window_config.WINDOW_TITLES['test_end']):

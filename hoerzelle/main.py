@@ -5,15 +5,24 @@ import test_evaluator
 import json
 import test_start_gui
 import paths_dir
+import time
 from test_result_gui import EvaluationGUI
+
 def main():
-    try:
-        is_valid = qr_code_validate.check_qr_code()
-    except Exception as exception:
-        print(f"Error validating QR code: {exception}")
-        return
-    if not is_valid:
-        return
+    try_qr_code = 3
+    while try_qr_code > 0:
+        try:
+            is_valid = qr_code_validate.check_qr_code()
+        except Exception as exception:
+            print(f"Error validating QR code: {exception}")
+            return
+        if not is_valid:
+            try_qr_code -= 1
+            time.sleep(3)
+            continue
+        else:
+            try_qr_code = None
+            break
     
     start_screen = test_start_gui.PatientStartScreen()
     start_screen.run()

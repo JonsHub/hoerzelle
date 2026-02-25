@@ -8,6 +8,7 @@ import logging
 import gui_utils
 import patient_manager
 import paths_dir
+import pygetwindow as gw
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from xml.dom import minidom
@@ -57,6 +58,24 @@ def wait_for_maico() -> bool:
     logging.info('maico32.exe is in focus')
     return True
 
+def force_maico_focus():
+    try:
+        windows = gw.getWindowsWithTitle("maico32.exe")
+        if windows:
+            win = windows[0]
+            if win.isMinimized:
+                win.restore()
+            win.activate()
+    except Exception as e:
+        print(f"Error forcing maico32.exe focus: {e}")
+        logging.error(f'Error forcing maico32.exe focus: {e}')
+        return
+
+    print("maico32.exe is in focus")
+    logging.info('maico32.exe is in focus')
+    time.sleep(2)
+    return None
+
 def load_patients() -> Optional[List[dict[str, Any]]]:
     if not paths_dir.JSON_FILE.exists():
         print("JSON not found, calling PatientManager")
@@ -76,7 +95,6 @@ def load_patients() -> Optional[List[dict[str, Any]]]:
         return None
 
 def create_xml_for_patient(patient: Dict[str, Any]) -> None:
-    """Erstellt XML-Datei für den Patienten BEVOR der Test startet"""
     try:
         date_of_birth_string = str(patient.get("date_of_birth"))
         temp_date = datetime.strptime(date_of_birth_string, "%d.%m.%Y")
@@ -195,7 +213,7 @@ def enter_patient(patient: Dict[str, Any]) -> None:
 def run_automation():
     print("Program started")
     logging.info("Program started")
-    
+    force_maico_focus()
     patients = load_patients()
     
     if not patients or not isinstance(patients, list) or len(patients) == 0:
@@ -208,11 +226,8 @@ def run_automation():
     logging.info(f"{total_patients} patients loaded")
     
     try:
-        pyautogui.leftClick(1600,100)
         if wait_for_maico():
             time.sleep(2)
-            
-            
             for patient_number, patient in enumerate(patients, 1):
                 print(f"Processing patient {patient_number}/{total_patients}")
                 logging.info(f"Processing patient {patient_number}/{total_patients}")

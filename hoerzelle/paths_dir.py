@@ -2,7 +2,6 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).parent
 
-#folders
 DATA_DIR = BASE_DIR / "data"
 QR_CODE_DIR = DATA_DIR / "qr_codes"
 SAVED_PATIENTS_DIR = DATA_DIR / "saved_patients"
@@ -11,7 +10,37 @@ XML_PORT = DATA_DIR / "xml_port"
 IMAGES_DIR = BASE_DIR / "images"
 LOG_DIR = BASE_DIR / "logs"
 
-#files
 JSON_FILE = SAVED_PATIENTS_DIR / "patients.json"
 THRESHOLDS_FILE = DATA_DIR / "evaluation_config.json"
-IN_XML = DATA_DIR / XML_PORT / "in.xml"
+IN_XML = XML_PORT / "in.xml"
+OUT_XML = XML_PORT / "out.xml"
+
+def ensure_directories_exist():
+    directories = [
+        DATA_DIR,
+        QR_CODE_DIR,
+        SAVED_PATIENTS_DIR,
+        SAVED_TESTS_DIR,
+        XML_PORT,
+        IMAGES_DIR,
+        LOG_DIR
+    ]
+    for directory in directories:
+        directory.mkdir(parents=True, exist_ok=True)
+
+def get_latest_test_xml():
+    xml_files = list(SAVED_TESTS_DIR.glob("*.xml"))
+    if not xml_files:
+        raise FileNotFoundError(f"Keine XML-Dateien in {SAVED_TESTS_DIR}")
+    return max(xml_files, key=lambda x: x.stat().st_mtime)
+
+def get_all_test_xmls():
+    return list(SAVED_TESTS_DIR.glob("*.xml"))
+
+def cleanup_old_logs(keep_last_number=0):
+    log_files = sorted(LOG_DIR.glob("*.log"), key=lambda x: x.stat().st_mtime)
+    if len(log_files) > keep_last_number:
+        for old_log in log_files[:-keep_last_number]:
+            old_log.unlink()
+            print(f"Gelöscht: {old_log.name}")
+    return None

@@ -26,8 +26,9 @@ def check_qr_code():
         hash_value = generate_hash(user_id)
         valid_hashes[hash_value] = user_id 
     
+    cv2.namedWindow('QR Code Validation', cv2.WINDOW_NORMAL)
+    cv2.setWindowProperty('QR Code Validation', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     cap = cv2.VideoCapture(0)
-    
     cap.set(cv2.CAP_PROP_AUTOFOCUS, 1)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1600)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 900)
