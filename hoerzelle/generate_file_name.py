@@ -1,9 +1,9 @@
 from datetime import datetime
 import json
-import paths
+import paths_dir
 
 def get_patient_data() -> dict:
-    with open(paths.JSON_FILE, "r", encoding="utf-8") as file:
+    with open(paths_dir.JSON_FILE, "r", encoding="utf-8") as file:
         patient_data = json.load(file)
     return patient_data
 

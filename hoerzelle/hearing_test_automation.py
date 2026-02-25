@@ -4,7 +4,7 @@ import gui_utils
 import time
 import pyautogui
 import shutil
-import paths
+import paths_dir
 from gui_utils import TestBlackScreen
 
 def execute_hearing_test_sequence():
@@ -131,7 +131,7 @@ def finish_and_save_test():
     
 def rename_xml_file():
     namestamp = generate_file_name.create_filename_from_patient(generate_file_name.get_patient_data())
-    saved_tests_dir = paths.SAVED_TESTS_DIR
+    saved_tests_dir = paths_dir.SAVED_TESTS_DIR
     out_xml_files = list(saved_tests_dir.glob("out.xml"))
     for file in out_xml_files:
         new_filename = f"{file.stem}_{namestamp}.xml"

@@ -1,7 +1,7 @@
 import json
 import hashlib
 import qrcode
-import paths
+import paths_dir
 SALT = "blackberry pancake bake"
 
 def generate_hash(user_id):
@@ -9,13 +9,13 @@ def generate_hash(user_id):
     return hashlib.sha256(payload.encode()).hexdigest()
 
 def create_qr_code():
-    paths.QR_CODE_DIR.mkdir(parents=True, exist_ok=True)
-    if not paths.JSON_FILE.exists():
-        print(f"JSON file not found: {paths.JSON_FILE}")
+    paths_dir.QR_CODE_DIR.mkdir(parents=True, exist_ok=True)
+    if not paths_dir.JSON_FILE.exists():
+        print(f"JSON file not found: {paths_dir.JSON_FILE}")
         return
     
     try:
-        with open(paths.JSON_FILE, "r") as file:
+        with open(paths_dir.JSON_FILE, "r") as file:
             patients = json.load(file)
         for patient in patients:
             user_id = patient.get("id")
@@ -28,7 +28,7 @@ def create_qr_code():
             qr.add_data(hash_value)
             qr.make(fit=True)
             img = qr.make_image(fill="black", back_color="white")
-            with open(paths.QR_CODE_DIR / f"{user_id}.png", "wb") as f:
+            with open(paths_dir.QR_CODE_DIR / f"{user_id}.png", "wb") as f:
                 img.save(f)
                 print(f"QR code created for user_id: {user_id}")
     except Exception as e:

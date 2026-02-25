@@ -4,7 +4,7 @@ import qr_code_validate
 import test_evaluator
 import json
 import test_start_gui
-import paths
+import paths_dir
 from test_result_gui import EvaluationGUI
 def main():
     try:
@@ -20,11 +20,11 @@ def main():
     fill_in_patient.run_automation()
     hearing_test_automation.runner()
     
-    with open(paths.THRESHOLDS_FILE, "r", encoding="utf-8") as file:
+    with open(paths_dir.THRESHOLDS_FILE, "r", encoding="utf-8") as file:
         config = json.load(file)
     
     
-    xml_files = list(paths.SAVED_TESTS_DIR.glob("*.xml"))
+    xml_files = list(paths_dir.SAVED_TESTS_DIR.glob("*.xml"))
     
     if not xml_files:
         print("No XML files found in SAVED_TESTS_DIR.")

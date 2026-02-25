@@ -1,5 +1,5 @@
 import tkinter as tk
-import paths
+import paths_dir
 from tkinter import font as tkfont
 
 class EvaluationGUI:
@@ -14,14 +14,14 @@ class EvaluationGUI:
         self.high_freq_warning_left = high_freq_warning_left
         self.high_freq_warning_right = high_freq_warning_right
         
-        self.images_dir = paths.IMAGES_DIR
+        self.images_dir = paths_dir.IMAGES_DIR
         self.traffic_light_images = {
             "red": tk.PhotoImage(file=self.images_dir / "ampel_rot.png"),
             "yellow": tk.PhotoImage(file=self.images_dir / "ampel_gelb.png"),
             "green": tk.PhotoImage(file=self.images_dir / "ampel_grün.png"),
         }
         
-        self.title_font = tkfont.Font(family="Franklin Gothic Medium", size=38)
+        self.title_font = tkfont.Font(family="Franklin Gothic Medium", size=30)
         self.label_font = tkfont.Font(family="Segoe UI", size=20)
         self.warning_font = tkfont.Font(family="Verdana", size=16)
         self.info_font = tkfont.Font(family="Segoe UI", size=18)

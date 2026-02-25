@@ -8,7 +8,7 @@ class PatientStartScreen:
         self.root.attributes("-fullscreen", True)
         self.root.configure(bg="black")
 
-        self.title_font = font.Font(family="Helvetica", size=30, weight="bold")
+        self.title_font = font.Font(family="Helvetica", size=23, weight="bold")
         self.button_font = font.Font(family="Helvetica", size=40, weight="bold")
 
         self.main_frame = tk.Frame(self.root, bg="black")
