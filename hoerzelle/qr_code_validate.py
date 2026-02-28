@@ -35,12 +35,14 @@ def check_qr_code():
     cap.set(cv2.CAP_PROP_FPS, 30)
     detector = cv2.QRCodeDetector()
     
+    validated_patient_id = None
+    is_valid = False
+    
     while True:
         camera_return, image = cap.read()
         if not camera_return:
             print("Failed to capture image from camera.")
             break
-        
         
         lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
         l_channel, a_channel, b_channel = cv2.split(lab)
@@ -56,14 +58,15 @@ def check_qr_code():
             if data_qr in valid_hashes:
                 patient_id = valid_hashes[data_qr]
                 print(f"QR Code is VALID for patient ID: {patient_id}")
+                validated_patient_id = patient_id
+                is_valid = True
                 
                 if bbox is not None:
-                    if bbox is not None:
-                        bbox = bbox.astype(int)
-                        cv2.polylines(image, [bbox], True, (0, 255, 0), 3)
-                        cv2.putText(image, f"VALID: {patient_id}", 
-                                (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 
-                                1, (0, 255, 0), 2)
+                    bbox = bbox.astype(int)
+                    cv2.polylines(image, [bbox], True, (0, 255, 0), 3)
+                    cv2.putText(image, f"VALID: {patient_id}", 
+                            (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 
+                            1, (0, 255, 0), 2)
             else:
                 print("QR Code is INVALID")
                 if bbox is not None:
@@ -83,4 +86,5 @@ def check_qr_code():
     
     cap.release()
     cv2.destroyAllWindows()
-    return True
+    
+    return is_valid, validated_patient_id

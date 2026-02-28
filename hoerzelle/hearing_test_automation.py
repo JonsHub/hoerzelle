@@ -10,7 +10,7 @@ from gui_utils import TestBlackScreen
 def execute_hearing_test_sequence():
     gui_utils.wait_until_ma33_starts()
     time.sleep(4)
-    pyautogui.press("space") #für update fenster weg
+    pyautogui.press("space")
     
     if not gui_utils.check_if_ma33_is_in_focus():
         return False
@@ -38,6 +38,7 @@ def execute_hearing_test_sequence():
     print("=" * 60)
     
     return True
+
 def test_waiting():
     print("Waiting for test to start...")
     gui_utils.wait_for_instruction_window_to_appear(window_config.WINDOW_TITLES['test_start'])
@@ -67,49 +68,6 @@ def finish_and_save_test():
         time.sleep(0.5)   
     gui_utils.wait_until_ma33_starts()
     
-    print("\nClicking Drucken button...")
-    if not gui_utils.click_button_relative_to_ma33_window('drucken'):
-        print("FAILED")
-        return False
-    
-    print("\nPrint dialog opened, clicking OK...")
-    time.sleep(1)
-    for _ in range(2):
-        pyautogui.press("tab")
-        time.sleep(0.3)
-    print("\nPressing SPACE to confirm print...")
-    pyautogui.press("space")
-    
-    time.sleep(1.5)
-    print("Access Folder")
-    pyautogui.hotkey("ctrl", "l")
-    time.sleep(0.5)
-    print("Entering path to Maico folder...")
-    gui_utils.path_save_writer()
-    pyautogui.press("enter")
-    for _ in range(7):
-        pyautogui.press("tab")
-        time.sleep(0.3)
-    
-    print("\nEntering test name")
-    patient_data = generate_file_name.get_patient_data()
-    
-    if isinstance(patient_data, list) and len(patient_data) > 0:
-        current_patient = patient_data[0]
-        time.sleep(1.5)
-        generate_file_name.enter_filename(current_patient)
-    
-    time.sleep(1)
-    
-    print("\n3x TAB to navigate to save button...")
-    for _ in range(3):
-        pyautogui.press('tab')
-        time.sleep(0.3)
-    
-    print("\nSPACE to save...")
-    pyautogui.press('space')
-    time.sleep(1)
-    
     print("\nClicking Speichern und Beenden...")
     if not gui_utils.click_button_relative_to_ma33_window('speichern_beenden'):
         print("FAILED")
@@ -135,6 +93,7 @@ def rename_xml_file():
     for file in out_xml_files:
         new_filename = f"{file.stem}_{namestamp}.xml"
         shutil.move(str(file), str(saved_tests_dir / new_filename))
+
 def runner():
     execute_hearing_test_sequence()
     test_waiting()

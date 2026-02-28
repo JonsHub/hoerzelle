@@ -6,6 +6,7 @@ import qr_code_validate
 import qr_code_create
 import test_evaluator
 import patient_database_download
+import patient_manager
 import gui_utils
 import time
 import generate_file_name
@@ -15,22 +16,26 @@ from test_result_gui import EvaluationGUI
 from gui_utils import TestBlackScreen
 
 TEST_CONFIG = {
-    'test_qr_code_creation': False,
-    'test_qr_code_validation': False,
-    'test_patient_download': False,
-    'test_patient_json_load': False,
-    'test_start_gui': True,
-    'test_test_in_progress_gui': False,
-    'test_maico_detection': False,
-    'test_ma33_detection': False,
-    'test_patient_input': True,
-    'test_hearing_test': False,
-    'test_xml_reading': False,
-    'test_evaluation_logic': False,
-    'test_result_gui': False,
-    'test_filename_generation': False,
-    "check_directories": False,
-    'run_full_workflow': False,
+    "test_qr_code_creation": 0,
+    "test_qr_code_validation": 0,
+    "test_patient_download": 0,
+    "test_patient_json_load": 0,
+    "test_start_gui": 0,
+    "test_test_in_progress_gui": 0,
+    "test_maico_detection": 0,
+    "test_ma33_detection": 0,
+    "test_patient_input": 0,
+    "test_patient_json_removal": 0,
+    "test_hearing_test": 0,
+    "test_xml_reading": 0,
+    "test_evaluation_logic": 0,
+    "test_pdf_generation": 0,
+    "test_result_gui_with_diagrams": 1,
+    "test_result_gui": 0,
+    "test_filename_generation": 0,
+    "check_directories": 0,
+    "move_to_archive": 0,
+    "run_full_workflow": 0,
 }
 
 def test_qr_code_validation():
@@ -39,8 +44,8 @@ def test_qr_code_validation():
     print("="*60)
     
     try:
-        result = qr_code_validate.check_qr_code()
-        print(f"✓ QR-Code Validation: {result}")
+        is_valid, patient_id = qr_code_validate.check_qr_code()
+        print(f"✓ QR-Code Validation: Valid={is_valid}, Patient ID={patient_id}")
     except Exception as e:
         print(f"✗ Fehler: {e}")
 
@@ -102,7 +107,7 @@ def test_start_gui():
 
 def test_result_gui():
     print("\n" + "="*60)
-    print("TEST: Result GUI")
+    print("TEST: Result GUI (OHNE Diagramme)")
     print("="*60)
     
     scenarios = [
@@ -145,6 +150,115 @@ def test_result_gui():
         )
         gui.run()
         print(f"✓ GUI Test abgeschlossen: {scenario['name']}")
+    except Exception as e:
+        print(f"✗ Fehler: {e}")
+
+def test_result_gui_with_diagrams():
+    print("\n" + "="*60)
+    print("TEST: Result GUI MIT Diagrammen")
+    print("="*60)
+    print("Nutzt neueste XML-Datei aus SAVED_TESTS_DIR")
+    
+    try:
+        xml_files = list(paths_dir.SAVED_TESTS_DIR.glob("*.xml"))
+        
+        if not xml_files:
+            print("✗ Keine XML-Dateien gefunden")
+            return
+        
+        latest_xml = max(xml_files, key=lambda x: x.stat().st_mtime)
+        print(f"Verwende XML: {latest_xml.name}")
+        
+        patient_data = test_evaluator.read_patient_xml(latest_xml)
+        
+        with open(paths_dir.THRESHOLDS_FILE, "r", encoding="utf-8") as f:
+            config = json.load(f)
+        
+        results = test_evaluator.evaluate_patient(patient_data, config)
+        
+        gui = EvaluationGUI(
+            left_result=results['left']['color'],
+            right_result=results['right']['color'],
+            high_freq_warning_left=results['left']['high_freq_warning'],
+            high_freq_warning_right=results['right']['high_freq_warning'],
+            patient_data=patient_data
+        )
+        gui.run()
+        print("✓ GUI mit Diagrammen abgeschlossen")
+    except Exception as e:
+        print(f"✗ Fehler: {e}")
+        import traceback
+        traceback.print_exc()
+
+def test_pdf_generation():
+    print("\n" + "="*60)
+    print("TEST: PDF Generation")
+    print("="*60)
+    print("Erstellt PDF aus neuester XML-Datei")
+    
+    try:
+        import pdf_generator
+        
+        xml_files = list(paths_dir.SAVED_TESTS_DIR.glob("*.xml"))
+        
+        if not xml_files:
+            print("✗ Keine XML-Dateien gefunden")
+            return
+        
+        latest_xml = max(xml_files, key=lambda x: x.stat().st_mtime)
+        print(f"Verwende XML: {latest_xml.name}")
+        
+        with open(paths_dir.THRESHOLDS_FILE, "r", encoding="utf-8") as f:
+            config = json.load(f)
+        
+        pdf_path = pdf_generator.generate_report_for_patient(latest_xml, config)
+        
+        print(f"✓ PDF erstellt: {pdf_path}")
+        print(f"  Größe: {pdf_path.stat().st_size / 1024:.1f} KB")
+        
+    except Exception as e:
+        print(f"✗ Fehler: {e}")
+        import traceback
+        traceback.print_exc()
+
+def test_patient_removal():
+    print("\n" + "="*60)
+    print("TEST: Patient Removal")
+    print("="*60)
+    
+    try:
+        patients = fill_in_patient.load_patients()
+        if not patients:
+            print("✗ Keine Patienten in JSON")
+            return
+        
+        print(f"Aktuelle Patienten: {len(patients)}")
+        for i, p in enumerate(patients[:3], 1):
+            print(f"  {i}. ID: {p.get('id')} - {p.get('firstname')} {p.get('lastname')}")
+        
+        if len(patients) > 3:
+            print(f"  ... und {len(patients)-3} weitere")
+        
+        patient_id = input("\nPatient-ID zum Entfernen (oder Enter für Abbruch): ").strip()
+        
+        if not patient_id:
+            print("Abgebrochen")
+            return
+        
+        try:
+            patient_id = int(patient_id)
+        except:
+            print("✗ Ungültige ID")
+            return
+        
+        success = patient_manager.remove_patient_from_json(patient_id)
+        
+        if success:
+            remaining = patient_manager.get_patient_count()
+            print(f"✓ Patient entfernt. Verbleibend: {remaining}")
+        else:
+            print("✗ Patient konnte nicht entfernt werden")
+        
     except Exception as e:
         print(f"✗ Fehler: {e}")
 
@@ -341,7 +455,14 @@ def test_filename_generation():
         print(f"✓ Generierter Dateiname: {filename}")
     except Exception as e:
         print(f"✗ Fehler: {e}")
-
+def test_archive():
+    print("\n" + "="*60)
+    print("TEST: Archive")
+    print("="*60)
+    try:
+        patient_manager.move_to_test_archive()
+    except Exception as e:
+        print(f"✗ Fehler: {e}")
 
 def run_full_workflow():
     print("\n" + "="*60)
@@ -360,6 +481,8 @@ def run_full_workflow():
         print("✓ Workflow abgeschlossen")
     except Exception as e:
         print(f"✗ Fehler: {e}")
+    return None
+
 
 def main():
     print("""
@@ -382,22 +505,26 @@ def main():
     print("-" * 60)
     
     test_functions = {
-        'test_qr_code_validation': test_qr_code_validation,
-        'test_qr_code_creation': test_qr_code_creation,
-        'test_patient_download': test_patient_download,
-        'test_patient_json_load': test_patient_json_load,
-        'test_start_gui': test_start_gui,
-        'test_result_gui': test_result_gui,
-        'test_maico_detection': test_maico_detection,
-        'test_ma33_detection': test_ma33_detection,
-        'test_patient_input': test_patient_input,
-        'test_hearing_test': test_hearing_test,
-        'test_xml_reading': test_xml_reading,
-        'test_evaluation_logic': test_evaluation_logic,
-        'test_filename_generation': test_filename_generation,
-        'run_full_workflow': run_full_workflow,
-        'test_test_in_progress_gui': test_test_in_progress_gui,
-        "check_directories": paths_dir.ensure_directories_exist,    
+        "test_qr_code_validation": test_qr_code_validation,
+        "test_qr_code_creation": test_qr_code_creation,
+        "test_patient_download": test_patient_download,
+        "test_patient_json_load": test_patient_json_load,
+        "test_start_gui": test_start_gui,
+        "test_result_gui": test_result_gui,
+        "test_result_gui_with_diagrams": test_result_gui_with_diagrams,
+        "test_pdf_generation": test_pdf_generation,
+        "test_patient_removal": test_patient_removal,
+        "test_maico_detection": test_maico_detection,
+        "test_ma33_detection": test_ma33_detection,
+        "test_patient_input": test_patient_input,
+        "test_hearing_test": test_hearing_test,
+        "test_xml_reading": test_xml_reading,
+        "test_evaluation_logic": test_evaluation_logic,
+        "test_filename_generation": test_filename_generation,
+        "run_full_workflow": run_full_workflow,
+        "test_test_in_progress_gui": test_test_in_progress_gui,
+        "check_directories": paths_dir.ensure_directories_exist,
+        "move_to_archive": test_archive   
     }
     
     for test_name in active_tests:
