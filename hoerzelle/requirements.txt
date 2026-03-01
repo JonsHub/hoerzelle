@@ -10,3 +10,4 @@ reportlab>=4.0.0
 Pillow>=10.0.0
 PyGetWindow>=0.0.9
 pyperclip>=1.8.2
+mypysql>=0.1.7
