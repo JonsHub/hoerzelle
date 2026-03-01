@@ -30,7 +30,7 @@ TEST_CONFIG = {
     "test_xml_reading": 0,
     "test_evaluation_logic": 0,
     "test_pdf_generation": 0,
-    "test_result_gui_with_diagrams": 1,
+    "test_result_gui_with_diagrams": 0,
     "test_result_gui": 0,
     "test_filename_generation": 0,
     "check_directories": 0,
