@@ -16,6 +16,7 @@ from test_result_gui import EvaluationGUI
 from gui_utils import TestBlackScreen
 
 TEST_CONFIG = {
+    "check_directories": 0,
     "test_qr_code_creation": 0,
     "test_qr_code_validation": 0,
     "test_patient_download": 0,
@@ -33,7 +34,6 @@ TEST_CONFIG = {
     "test_result_gui_with_diagrams": 0,
     "test_result_gui": 0,
     "test_filename_generation": 0,
-    "check_directories": 0,
     "move_to_archive": 0,
     "run_full_workflow": 0,
 }
