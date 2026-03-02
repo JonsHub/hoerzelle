@@ -5,7 +5,6 @@ import os
 import qr_code_validate
 import qr_code_create
 import test_evaluator
-import patient_database_download
 import patient_manager
 import gui_utils
 import time
@@ -17,12 +16,11 @@ from gui_utils import TestBlackScreen
 
 TEST_CONFIG = {
     "check_directories": 0,
+    "test_patient_download": 0,
     "test_qr_code_creation": 0,
     "test_qr_code_validation": 0,
-    "test_patient_download": 0,
-    "test_patient_json_load": 0,
     "test_start_gui": 0,
-    "test_test_in_progress_gui": 0,
+    "test_test_in_progress_gui": 0, #drücke q um zu beenden
     "test_maico_detection": 0,
     "test_ma33_detection": 0,
     "test_patient_input": 0,
@@ -63,20 +61,6 @@ def test_qr_code_creation():
 
 
 def test_patient_download():
-    print("\n" + "="*60)
-    print("TEST: Patient Download")
-    print("="*60)
-    
-    try:
-        patients = patient_database_download.download_patients()
-        print(f"✓ {len(patients)} Patienten geladen")
-        if patients:
-            print(f"   Beispiel: {patients[0]}")
-    except Exception as e:
-        print(f"✗ Fehler: {e}")
-
-
-def test_patient_json_load():
     print("\n" + "="*60)
     print("TEST: Patient JSON Load")
     print("="*60)
@@ -508,7 +492,6 @@ def main():
         "test_qr_code_validation": test_qr_code_validation,
         "test_qr_code_creation": test_qr_code_creation,
         "test_patient_download": test_patient_download,
-        "test_patient_json_load": test_patient_json_load,
         "test_start_gui": test_start_gui,
         "test_result_gui": test_result_gui,
         "test_result_gui_with_diagrams": test_result_gui_with_diagrams,

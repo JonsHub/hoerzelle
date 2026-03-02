@@ -34,6 +34,3 @@ def create_qr_code():
     except Exception as e:
         print(f"Error processing JSON file: {e}")
     return True
-
-if __name__ == "__main__":
-    create_qr_code()

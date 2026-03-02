@@ -8,6 +8,7 @@ import json
 import test_start_gui
 import paths_dir
 import time
+import maico_handler
 from test_result_gui import EvaluationGUI
 
 def main():
@@ -92,7 +93,20 @@ def main():
     except Exception as exception:
         print(f"Error removing patient from queue: {exception}")
     
+    time.sleep(5)
+    maico_handler.restart_maico()
     return True
 
+def run_kiosk():
+    while True:
+        print("System ready. Waiting for patient to scan QR code...")
+        success = main()
+        if success:
+            print("Patient processed successfully. Waiting for next patient...")
+        else:
+            print("Error processing patient. Restart in 5 seconds...")
+            time.sleep(5)
+            continue
+
 if __name__ == "__main__":
-    main()
+    run_kiosk()
