@@ -24,7 +24,7 @@ TEST_CONFIG = {
     "test_maico_detection": 0,
     "test_ma33_detection": 0,
     "test_patient_input": 0,
-    "test_patient_json_removal": 0,
+    "test_patient_removal": 0,
     "test_hearing_test": 0,
     "test_xml_reading": 0,
     "test_evaluation_logic": 0,
@@ -33,7 +33,7 @@ TEST_CONFIG = {
     "test_result_gui": 0,
     "test_filename_generation": 0,
     "move_to_archive": 0,
-    "run_full_workflow": 0,
+    "run_full_workflow": 0
 }
 
 def test_qr_code_validation():
@@ -71,7 +71,7 @@ def test_patient_download():
             print(f"✓ {len(patients)} Patienten aus JSON geladen")
             print(f"   Erster Patient: {patients[0].get('firstname')} {patients[0].get('lastname')}")
         else:
-            print("✗ Keine Patienten gefunden")
+            print("✗ Keine Patienten gefunden. Vielleicht VPN nicht verbunden?")
     except Exception as e:
         print(f"✗ Fehler: {e}")
 
@@ -467,7 +467,6 @@ def run_full_workflow():
         print(f"✗ Fehler: {e}")
     return None
 
-
 def main():
     print("""
 ╔════════════════════════════════════════════════════════════════╗
@@ -507,7 +506,7 @@ def main():
         "run_full_workflow": run_full_workflow,
         "test_test_in_progress_gui": test_test_in_progress_gui,
         "check_directories": paths_dir.ensure_directories_exist,
-        "move_to_archive": test_archive   
+        "move_to_archive": test_archive,
     }
     
     for test_name in active_tests:

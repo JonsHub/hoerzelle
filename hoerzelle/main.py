@@ -39,7 +39,7 @@ def main():
     
     start_screen = test_start_gui.PatientStartScreen()
     start_screen.run()
-    
+    time.sleep(0.69)
     fill_in_patient.run_automation()
     
     hearing_test_automation.runner()

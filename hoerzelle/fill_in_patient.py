@@ -54,8 +54,6 @@ def force_maico_focus():
     except Exception as e:
         print(f"Error forcing maico32.exe focus: {e}")
         return
-
-    time.sleep(2)
     return None
 
 def load_patients() -> Optional[List[dict[str, Any]]]:
@@ -66,7 +64,7 @@ def load_patients() -> Optional[List[dict[str, Any]]]:
         
         if not paths_dir.SAVED_PATIENTS_DIR.exists():
             return None
-    
+        
     try:
         with open(paths_dir.JSON_FILE, 'r', encoding='utf-8') as file:
             return json.load(file)
