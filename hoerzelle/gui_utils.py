@@ -29,7 +29,9 @@ def check_if_ma33_is_running() -> bool:
     return False
 
 def get_patient_id():
-    time.sleep(0.1)
+    x, y = 1408, 731
+    time.sleep(0.5)
+    pyautogui.moveTo(x, y)
     pyautogui.doubleClick()
     time.sleep(0.05)
     pyautogui.hotkey('ctrl', 'c')
