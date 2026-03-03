@@ -22,7 +22,6 @@ def main():
             is_valid, scanned_patient_id = qr_code_validate.check_qr_code()
             if is_valid and scanned_patient_id:
                 current_patient_id = scanned_patient_id
-                print(f"QR Code valid for patient ID: {current_patient_id}")
                 break
             else:
                 attempt_count += 1

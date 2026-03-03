@@ -41,8 +41,6 @@ def wait_for_maico() -> bool:
     
     while not is_maico_in_focus():
         time.sleep(0.5)
-    
-    print("maico32.exe is in focus")
     return True
 
 def force_maico_focus():
@@ -57,7 +55,6 @@ def force_maico_focus():
         print(f"Error forcing maico32.exe focus: {e}")
         return
 
-    print("maico32.exe is in focus")
     time.sleep(2)
     return None
 

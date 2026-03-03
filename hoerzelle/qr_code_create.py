@@ -2,6 +2,7 @@ import json
 import hashlib
 import qrcode
 import paths_dir
+import patient_manager
 SALT = "blackberry pancake bake"
 
 def generate_hash(user_id):
@@ -9,11 +10,9 @@ def generate_hash(user_id):
     return hashlib.sha256(payload.encode()).hexdigest()
 
 def create_qr_code():
-    paths_dir.QR_CODE_DIR.mkdir(parents=True, exist_ok=True)
     if not paths_dir.JSON_FILE.exists():
         print(f"JSON file not found: {paths_dir.JSON_FILE}")
-        return
-    
+        patient_manager.get_all_patients()
     try:
         with open(paths_dir.JSON_FILE, "r") as file:
             patients = json.load(file)
@@ -34,3 +33,6 @@ def create_qr_code():
     except Exception as e:
         print(f"Error processing JSON file: {e}")
     return True
+
+if __name__ == "__main__":
+    create_qr_code()
