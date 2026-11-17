@@ -11,3 +11,7 @@ Test läuft debuggen
 Speichern beenden geht gar nicht
 
 Pfad irgendwie einstellen EDV einbindung
+
+Sobald der Patient auf Start klickt, sollte im Idealfall die Maske schon eingetragen sein. 
+Das Programm wartet dann einfach nur darauf, dass der Opa da auf Start drückt, dass das im Hintergrund überhaupt nicht zu sehen 
+ist, was Python da macht
