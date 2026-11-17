@@ -142,57 +142,9 @@ MAICO32/MA33
 Die Grenzwerte stehen in [`data/evaluation_config.json`](./data/evaluation_config.json)
 und werden zur Laufzeit geladen. Eine leere Ohrmessung wird derzeit als grün bewertet.
 
-## 7. Offene Punkte und TODOs
+## 7. Betriebshinweise
 
-### Priorität 1 – Korrektheit und Sicherheit
-
-- [ ] In [`main.py`](./main.py) `paths_dir.ensure_directories_exist()` tatsächlich
-  aufrufen. Aktuell wird nur das Funktionsobjekt referenziert.
-- [ ] Nach drei ungültigen QR-Versuchen einen definierten Zustand herstellen:
-  verständliche Benutzeranzeige, Kamera sauber schließen und entweder kontrolliert
-  zum Bereitschaftsbildschirm zurückkehren oder den Lauf mit einem sichtbaren Fehler
-  beenden. Aktuell gibt `main()` `False` zurück; `run_kiosk()` startet danach
-  dauerhaft alle fünf Sekunden neu.
-- [ ] Den gescannten `current_patient_id` bis zur Automation durchreichen. Aktuell
-  verarbeitet `fill_in_patient.run_automation()` die komplette JSON-Liste und nicht
-  garantiert den gescannten Patienten.
-- [ ] Datenbankzugang, QR-SALT und externe Pfade aus dem Quellcode entfernen und über
-  sichere Konfiguration/Umgebungsvariablen bereitstellen. Der feste SALT ist kein
-  Geheimnis, wenn der Quellcode verfügbar ist.
-- [ ] JSON-, XML- und Datenbankdaten validieren, bevor sie in GUIs, Dateinamen oder
-  PyAutoGUI-Eingaben gelangen.
-
-### Priorität 2 – Robustheit im Betrieb
-
-- [ ] Keine unbestimmten Endlosschleifen ohne Timeout in Prozess-, Fokus- und
-  Fenstervorgängen (`gui_utils`, `fill_in_patient`, `hearing_test_automation`).
-- [ ] Vor der Auswahl der neuesten XML-Datei prüfen, dass sie zu genau diesem
-  Patienten/Test gehört; alte Dateien können derzeit als Ergebnis verwendet werden.
-- [ ] Dateiumbenennung, Archivierung und Patientenentfernung transaktional bzw.
-  wiederholbar machen. Ein Fehler nach dem Test darf nicht zu doppelten oder
-  verlorenen Läufen führen.
-- [ ] Temporäre PDF-Bilder mit `try/finally` aufräumen; bei einem Fehler bleiben sie
-  aktuell möglicherweise in `data/saved_tests/temp_images/`.
-- [ ] `except:` und breit gefasste Exceptions durch konkrete Fehlerbehandlung und
-  Logging ersetzen.
-- [ ] MAICO-/MA33-Pfade, Fenstertitel und Koordinaten konfigurierbar machen und eine
-  Kalibrierung bzw. Startprüfung ergänzen.
-
-### Priorität 3 – Wartbarkeit und Tests
-
-- [ ] Gemeinsame Audiogramm-Erzeugung von `pdf_generator` und `test_result_gui`
-  extrahieren, damit Darstellung und Grenzzonen nicht auseinanderlaufen.
-- [ ] Unit-Tests für QR-Hash, Evaluator-Grenzfälle, XML-Parsing,
-  Dateinamengenerierung und Warteschlangenoperationen ergänzen.
-- [ ] Einen Hardware-freien Simulationsmodus für Kamera, MAICO und MA33 bereitstellen.
-- [ ] `playground.py` und `db_update.py` als experimentell kennzeichnen, integrieren
-  oder aus dem produktiven Verzeichnis entfernen.
-- [ ] Abhängigkeit `mypysql` prüfen: Der Code verwendet SQLAlchemy; der passende
-  SQLAlchemy-MySQL-Treiber sollte explizit und korrekt dokumentiert sein.
-- [ ] Start-, Fehler- und Abschlusszustände in einer Zustandsmaschine modellieren,
-  statt den Ablauf ausschließlich über `sleep()` und implizite Fokuszustände zu steuern.
-
-## 8. Betriebshinweise
+Die vollständige offene Aufgabenliste steht in [`TODO.md`](./TODO.md).
 
 Die Anwendung setzt aktuell mindestens voraus:
 
