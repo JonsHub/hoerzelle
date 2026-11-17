@@ -1,0 +1,13 @@
+mehrere Patienten fürs Deployment sollte ready sein.
+15.12-28.03
+
+5-7h/W 
+DB (Patienten), werden gezogen, JSON wird angepasst, Funktion mit mehren Patienten, und dann JSON Funktionalität Logik. Reibungsloser Ablauf für mehere (zb. 10er Liste) unter Benutzung 
+Confluence aufräumen
+
+Nach ID, gibt es einen Klick wieso bricht alles ab 
+Kalibrierung ist fällig Klick kommt nicht auf die Klick Logik ist völlig kaputt
+Test läuft debuggen 
+Speichern beenden geht gar nicht
+
+Pfad irgendwie einstellen EDV einbindung
