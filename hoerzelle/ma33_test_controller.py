@@ -16,8 +16,9 @@ import cv2
 import numpy as np
 import pyautogui
 import win32gui
+import win32process
+import psutil
 
-import gui_utils
 import paths_dir
 
 
@@ -29,10 +30,40 @@ BUTTON_TEMPLATES = {
     "confirm_yes": "5_save_and_close_ask.png",
 }
 
-# The confirmation template contains the whole dialog. The click target is the
-# "Ja" button inside that dialog, not the center of the matched image.
 CLICK_POSITIONS = {
+    "autotest": (0.50, 0.25),
+    "autotest_pushed": (0.54, 0.25),
+    "play": (0.36, 0.36),
+    "save_and_close": (0.50, 0.52),
     "confirm_yes": (0.20, 0.68),
+}
+
+# Match against the actual control region rather than all unused background.
+# The values are (left, top, right, bottom) fractions of the reference image.
+MATCH_CROPS = {
+    "autotest": (0.25, 0.05, 0.76, 0.52),
+    "autotest_pushed": (0.08, 0.02, 0.96, 0.55),
+    "play": (0.08, 0.45, 0.58, 0.72),
+    "save_and_close": (0.02, 0.02, 0.98, 0.70),
+    "confirm_yes": (0.02, 0.02, 0.98, 0.98),
+}
+
+TEMPLATE_THRESHOLDS = {
+    "autotest": 0.80,
+    "autotest_pushed": 0.80,
+    "play": 0.70,
+    "save_and_close": 0.75,
+    "confirm_yes": 0.70,
+}
+
+# Small measured corrections from live testing. Positive values move the click
+# further down, negative values further up.
+CLICK_OFFSET_PX = {
+    "autotest": (0, -5),
+    "autotest_pushed": (0, 0),
+    "play": (0, -25),
+    "save_and_close": (0, 20),
+    "confirm_yes": (0, 0),
 }
 
 
@@ -56,7 +87,7 @@ class MA33TestController:
     def __init__(
         self,
         template_directory: Optional[Path] = None,
-        confidence_threshold: float = 0.80,
+        confidence_threshold: Optional[float] = None,
         poll_interval: float = 0.5,
     ) -> None:
         self.template_directory = template_directory or (
@@ -70,12 +101,34 @@ class MA33TestController:
 
         print("Warte auf das MA33-Fenster ...")
         while True:
-            window_handle = gui_utils.find_ma33_window_handle()
-            if window_handle and win32gui.IsWindowVisible(window_handle):
-                title = win32gui.GetWindowText(window_handle)
-                print(f"MA33-Fenster gefunden: {title or window_handle}")
+            for window_handle in self._find_visible_ma33_windows():
+                print(
+                    "MA33-Fenster gefunden: "
+                    f"{win32gui.GetWindowText(window_handle) or window_handle}"
+                )
                 return window_handle
             time.sleep(self.poll_interval)
+
+    @staticmethod
+    def _find_visible_ma33_windows() -> list[int]:
+        """Find visible windows owned by ma33.exe, not by title matching."""
+
+        handles: list[int] = []
+
+        def enum_callback(handle: int, _unused: object) -> bool:
+            if not win32gui.IsWindowVisible(handle):
+                return True
+            try:
+                _thread_id, process_id = win32process.GetWindowThreadProcessId(handle)
+                process_name = psutil.Process(process_id).name().lower()
+                if process_name == "ma33.exe":
+                    handles.append(handle)
+            except (psutil.NoSuchProcess, psutil.AccessDenied, OSError):
+                pass
+            return True
+
+        win32gui.EnumWindows(enum_callback, None)
+        return handles
 
     def wait_for_template(
         self,
@@ -105,7 +158,8 @@ class MA33TestController:
                 print(
                     f"Gefunden: '{template_name}' mit "
                     f"{match.confidence:.1%} bei "
-                    f"({match.center_x}, {match.center_y})"
+                    f"Match-Bereich ({match.center_x}, {match.center_y}), "
+                    f"Klick-Ziel ({match.click_x}, {match.click_y})"
                 )
                 return match
             time.sleep(self.poll_interval)
@@ -181,6 +235,17 @@ class MA33TestController:
         window_top: int,
     ) -> Optional[TemplateMatch]:
         best_match: Optional[TemplateMatch] = None
+        confidence_threshold = (
+            self.confidence_threshold
+            if self.confidence_threshold is not None
+            else TEMPLATE_THRESHOLDS[template_name]
+        )
+        left, top, right, bottom = MATCH_CROPS[template_name]
+        crop_left = round(template.shape[1] * left)
+        crop_top = round(template.shape[0] * top)
+        crop_right = round(template.shape[1] * right)
+        crop_bottom = round(template.shape[0] * bottom)
+        template = template[crop_top:crop_bottom, crop_left:crop_right]
 
         for scale in np.linspace(0.75, 1.35, 13):
             scaled_width = max(1, round(template.shape[1] * scale))
@@ -199,7 +264,7 @@ class MA33TestController:
                 cv2.TM_CCOEFF_NORMED,
             )
             _, confidence, _, location = cv2.minMaxLoc(result)
-            if confidence < self.confidence_threshold:
+            if confidence < confidence_threshold:
                 continue
 
             candidate = TemplateMatch(
@@ -209,14 +274,30 @@ class MA33TestController:
                 center_y=window_top + location[1] + scaled_height // 2,
                 width=scaled_width,
                 height=scaled_height,
-                click_x=window_left + location[0] + round(
-                    scaled_width
-                    * CLICK_POSITIONS.get(template_name, (0.5, 0.5))[0]
-                ),
-                click_y=window_top + location[1] + round(
-                    scaled_height
-                    * CLICK_POSITIONS.get(template_name, (0.5, 0.5))[1]
-                ),
+                click_x=(
+                    window_left + location[0] + scaled_width // 2
+                    if template_name in {"save_and_close", "confirm_yes"}
+                    else window_left + location[0] + round(
+                        scaled_width
+                        * CLICK_POSITIONS.get(template_name, (0.5, 0.5))[0]
+                    )
+                ) + (
+                    -98
+                    if template_name == "confirm_yes"
+                    else 0
+                ) + CLICK_OFFSET_PX[template_name][0],
+                click_y=(
+                    window_top + location[1] + scaled_height // 2
+                    if template_name in {"save_and_close", "confirm_yes"}
+                    else window_top + location[1] + round(
+                        scaled_height
+                        * CLICK_POSITIONS.get(template_name, (0.5, 0.5))[1]
+                    )
+                ) + (
+                    21
+                    if template_name == "confirm_yes"
+                    else 0
+                ) + CLICK_OFFSET_PX[template_name][1],
             )
             if best_match is None or candidate.confidence > best_match.confidence:
                 best_match = candidate
@@ -226,8 +307,14 @@ class MA33TestController:
     @staticmethod
     def _ma33_is_foreground() -> bool:
         foreground_handle = win32gui.GetForegroundWindow()
-        foreground_title = win32gui.GetWindowText(foreground_handle).lower()
-        return "ma33" in foreground_title
+        try:
+            _thread_id, process_id = win32process.GetWindowThreadProcessId(
+                foreground_handle
+            )
+            process_name = psutil.Process(process_id).name().lower()
+            return process_name == "ma33.exe"
+        except (psutil.NoSuchProcess, psutil.AccessDenied, OSError):
+            return False
 
 
 def main() -> int:

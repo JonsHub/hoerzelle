@@ -51,6 +51,10 @@ technische Teil.
 - [x] Isolierten visuellen Test-Controller mit den vorhandenen Button-Screenshots
   anlegen; der Controller klickt erst nach manueller Bestätigung und ist noch nicht
   in den Produktionsablauf integriert.
+- [x] Trefferbereiche der Vorlagen auf die eigentlichen Buttonflächen eingrenzen,
+  damit Match-Mittelpunkt und Klick-Ziel nicht durch umliegenden GUI-Fluff verzerrt werden.
+- [x] Nach dem Testlauf: Autotest und Ja bestätigt; Play-Trefferfläche angepasst;
+  vertikale Klickposition von Speichern & beenden korrigiert.
 - [ ] Template-Matching mit echten MA33-Fenstergrößen und DPI-Skalierungen testen.
 
 ## 2. Patientenablauf und Warteschlange
