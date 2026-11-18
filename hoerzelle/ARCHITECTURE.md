@@ -59,6 +59,7 @@ fünf Sekunden und versucht es erneut.
 | [`patient_json_save.py`](./patient_json_save.py) | Datenbankresultate in JSON serialisieren | Datenbankmodul, `paths_dir`; Dateisystem |
 | [`fill_in_patient.py`](./fill_in_patient.py) | Patientendaten in MAICO-Maske eintragen und XML vorbereiten | Windows-Prozesse, PyAutoGUI, Clipboard, `gui_utils` |
 | [`hearing_test_automation.py`](./hearing_test_automation.py) | Hörtest starten, überwachen und speichern | PyAutoGUI, `gui_utils`, `window_config`; MA33 |
+| [`ma33_test_controller.py`](./ma33_test_controller.py) | Sicherer visueller Test der MA33-Buttons mit manueller Klickfreigabe | OpenCV, PyAutoGUI, Win32; `images/buttons` |
 | [`gui_utils.py`](./gui_utils.py) | Windows-Fokus, Fenstersuche, Koordinatenklicks und Wartezustände | Win32, psutil, PyAutoGUI, Tkinter |
 | [`window_config.py`](./window_config.py) | Fenstertitel und relative Button-Koordinaten | Keine |
 | [`test_evaluator.py`](./test_evaluator.py) | XML lesen und Messwerte bewerten | Python-XML; Konfigurationsdict |

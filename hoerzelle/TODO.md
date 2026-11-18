@@ -48,8 +48,10 @@ technische Teil.
 - [ ] Nach dem Klick den Zustandswechsel verifizieren, statt nur `sleep()` zu verwenden.
 - [ ] Fallback und sichtbare Fehlermeldung vorsehen, wenn OCR/Bilderkennung keinen
   eindeutigen Button findet.
-- [ ] Erst einen isolierten OCR-Prototyp mit den drei vorhandenen Screenshots bauen;
-  noch keine vollständige Umstellung der Produktionsautomation.
+- [x] Isolierten visuellen Test-Controller mit den vorhandenen Button-Screenshots
+  anlegen; der Controller klickt erst nach manueller Bestätigung und ist noch nicht
+  in den Produktionsablauf integriert.
+- [ ] Template-Matching mit echten MA33-Fenstergrößen und DPI-Skalierungen testen.
 
 ## 2. Patientenablauf und Warteschlange
 
