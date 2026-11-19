@@ -6,11 +6,11 @@ import pyautogui
 import shutil
 import paths_dir
 from gui_utils import TestBlackScreen
+from ma33_test_controller import MA33TestController
 
 def execute_hearing_test_sequence():
     gui_utils.wait_until_ma33_starts()
     time.sleep(4)
-    pyautogui.press("space")
     
     if not gui_utils.check_if_ma33_is_in_focus():
         return False
@@ -21,14 +21,16 @@ def execute_hearing_test_sequence():
 
     time.sleep(2)
     
-    print("\nStep 1: Clicking Autotest button...")
-    if not gui_utils.click_button_relative_to_ma33_window('autotest'):
+    controller = MA33TestController()
+
+    print("\nStep 1: Suche und klicke Autotest ...")
+    if not controller.click_template("autotest"):
         print("FAILED")
         return False
-    time.sleep(2)
+    time.sleep(1)
     
-    print("\nStep 2: Clicking Play button...")
-    if not gui_utils.click_button_relative_to_ma33_window('play'):
+    print("\nStep 2: Suche und klicke Play ...")
+    if not controller.click_template("play"):
         print("FAILED")
         return False
     
@@ -63,23 +65,14 @@ def finish_and_save_test():
     print("FINISH AND SAVE TEST")
     print("=" * 60)
 
-    while not gui_utils.check_if_ma33_is_in_focus():
-        print("ERROR: MA33 not in focus")
-        time.sleep(0.5)   
     gui_utils.wait_until_ma33_starts()
-    
-    print("\nClicking Speichern und Beenden...")
-    if not gui_utils.click_button_relative_to_ma33_window('speichern_beenden'):
+
+    controller = MA33TestController()
+    print("\nSuche Speichern & beenden und bestätige anschließend mit Leertaste ...")
+    if not controller.confirm_save_and_close():
         print("FAILED")
         return False
-    
-    time.sleep(1)
-    
-    print("\nClicking Ja (Messwerte übernehmen)...")
-    if not gui_utils.click_button_relative_to_ma33_window('ja_uebernehmen'):
-        print("FAILED")
-        return False
-    time.sleep(1)
+
     print("\n" + "=" * 60)
     print("SUCCESS: Test saved and finished!")
     print("=" * 60)
@@ -95,8 +88,8 @@ def rename_xml_file():
         shutil.move(str(file), str(saved_tests_dir / new_filename))
 
 def runner():
-    execute_hearing_test_sequence()
+    if not execute_hearing_test_sequence():
+        return False
     test_waiting()
     time.sleep(1.5)
-    finish_and_save_test()
-    return True
+    return finish_and_save_test()

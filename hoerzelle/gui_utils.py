@@ -6,6 +6,28 @@ import time
 import pyautogui
 import tkinter as tk
 import window_config
+
+PATIENT_ID_POSITION = (0.723684, 0.731579)
+
+
+def find_maico32_window_handle():
+    def enum_callback(handle_window, window_handles):
+        if not win32gui.IsWindowVisible(handle_window):
+            return True
+        try:
+            _, process_id = win32process.GetWindowThreadProcessId(handle_window)
+            process = psutil.Process(process_id)
+            if process.name().lower() == "maico32.exe":
+                window_handles.append(handle_window)
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+        return True
+
+    window_handles = []
+    win32gui.EnumWindows(enum_callback, window_handles)
+    return window_handles[0] if window_handles else None
+
+
 def check_if_ma33_is_in_focus() -> bool:
     while True:
         try:
@@ -29,14 +51,32 @@ def check_if_ma33_is_running() -> bool:
     return False
 
 def get_patient_id():
-    x, y = 1408, 731
+    window_handle = find_maico32_window_handle()
+    if not window_handle:
+        raise RuntimeError("Kein sichtbares maico32.exe-Fenster gefunden.")
+
+    left, top, right, bottom = win32gui.GetWindowRect(window_handle)
+    width = right - left
+    height = bottom - top
+    if width <= 0 or height <= 0:
+        raise RuntimeError("Ungültige Größe des MAICO-Fensters.")
+
+    x = left + round(width * PATIENT_ID_POSITION[0])
+    y = top + round(height * PATIENT_ID_POSITION[1])
+
+    win32gui.SetForegroundWindow(window_handle)
     time.sleep(0.5)
     pyautogui.moveTo(x, y)
     pyautogui.doubleClick()
     time.sleep(0.05)
+    pyperclip.copy("")
     pyautogui.hotkey('ctrl', 'c')
     time.sleep(0.1)
     patienten_id = pyperclip.paste().strip()
+    if not patienten_id.isdigit():
+        raise ValueError(
+            f"Keine numerische Patienten-ID aus MAICO gelesen: {patienten_id!r}"
+        )
     return patienten_id
 def find_print_dialog_window():
     def enum_callback(handle_window, window_handles):

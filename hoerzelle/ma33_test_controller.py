@@ -24,7 +24,7 @@ import paths_dir
 
 BUTTON_TEMPLATES = {
     "autotest": "1_autotest_button.png",
-    "autotest_pushed": "2_autotest_pushed.png",
+    #"autotest_pushed": "2_autotest_pushed.png",
     "play": "3_playbutton.png",
     "save_and_close": "4_speichern_button.png",
     "confirm_yes": "5_save_and_close_ask.png",
@@ -32,7 +32,7 @@ BUTTON_TEMPLATES = {
 
 CLICK_POSITIONS = {
     "autotest": (0.50, 0.25),
-    "autotest_pushed": (0.54, 0.25),
+    #"autotest_pushed": (0.54, 0.25),
     "play": (0.36, 0.36),
     "save_and_close": (0.50, 0.52),
     "confirm_yes": (0.20, 0.68),
@@ -42,7 +42,7 @@ CLICK_POSITIONS = {
 # The values are (left, top, right, bottom) fractions of the reference image.
 MATCH_CROPS = {
     "autotest": (0.25, 0.05, 0.76, 0.52),
-    "autotest_pushed": (0.08, 0.02, 0.96, 0.55),
+    #"autotest_pushed": (0.08, 0.02, 0.96, 0.55),
     "play": (0.08, 0.45, 0.58, 0.72),
     "save_and_close": (0.02, 0.02, 0.98, 0.70),
     "confirm_yes": (0.02, 0.02, 0.98, 0.98),
@@ -50,7 +50,7 @@ MATCH_CROPS = {
 
 TEMPLATE_THRESHOLDS = {
     "autotest": 0.80,
-    "autotest_pushed": 0.80,
+    #"autotest_pushed": 0.80,
     "play": 0.70,
     "save_and_close": 0.75,
     "confirm_yes": 0.70,
@@ -60,7 +60,7 @@ TEMPLATE_THRESHOLDS = {
 # further down, negative values further up.
 CLICK_OFFSET_PX = {
     "autotest": (0, -5),
-    "autotest_pushed": (0, 0),
+    #"autotest_pushed": (0, 0),
     "play": (0, -25),
     "save_and_close": (0, 20),
     "confirm_yes": (0, 0),
@@ -82,7 +82,7 @@ class TemplateMatch:
 
 
 class MA33TestController:
-    """Find MA33 controls and request confirmation before clicking."""
+    """Find and operate MA33 controls with visual confirmation."""
 
     def __init__(
         self,
@@ -170,16 +170,69 @@ class MA33TestController:
     def confirm_and_click(self, match: TemplateMatch) -> bool:
         """Move to a match and click only after explicit console confirmation."""
 
+        if not self._move_to_match(match):
+            return False
+        confirmation = input(
+            "Mit 'j' bestätigen, jede andere Eingabe bricht ab: "
+        ).strip().lower()
+        if confirmation != "j":
+            print("Klick abgebrochen.")
+            return False
+
+        if not self._ma33_is_foreground():
+            print("Klick abgebrochen: MA33 ist nicht im Vordergrund.")
+            return False
+
+        pyautogui.click(match.click_x, match.click_y)
+        print("Klick ausgeführt.")
+        return True
+
+    def click_template(
+        self,
+        template_name: str,
+        timeout: Optional[float] = None,
+    ) -> bool:
+        """Find a control and click it automatically after a safe foreground check."""
+
+        if template_name not in BUTTON_TEMPLATES:
+            valid_names = ", ".join(BUTTON_TEMPLATES)
+            raise ValueError(f"Unbekannter Button '{template_name}'. Erlaubt: {valid_names}")
+
+        match = self.wait_for_template(template_name, timeout)
+        return match is not None and self._click_match(match)
+
+    def confirm_save_and_close(
+        self,
+        timeout: Optional[float] = None,
+        confirmation_delay: float = 1.5,
+    ) -> bool:
+        """Click save, then confirm the preselected Ja action with Space."""
+
+        if not self.click_template("save_and_close", timeout):
+            return False
+
+        print(
+            f"Warte {confirmation_delay:.1f} Sekunden auf den "
+            "Bestätigungsdialog ..."
+        )
+        time.sleep(confirmation_delay)
+        if not self._ma33_is_foreground():
+            print("Bestätigung abgebrochen: MA33 ist nicht im Vordergrund.")
+            return False
+
+        print("Bestätige die vorausgewählte Ja-Aktion mit Leertaste.")
+        pyautogui.press("space")
+        return True
+
+    def _move_to_match(self, match: TemplateMatch) -> bool:
         pyautogui.moveTo(match.click_x, match.click_y, duration=0.2)
         print(
             f"Maus steht auf ({match.click_x}, {match.click_y}). "
-            "Mit 'j' bestätigen, jede andere Eingabe bricht ab: ",
-            end="",
-            flush=True,
         )
-        confirmation = input().strip().lower()
-        if confirmation != "j":
-            print("Klick abgebrochen.")
+        return True
+
+    def _click_match(self, match: TemplateMatch) -> bool:
+        if not self._move_to_match(match):
             return False
 
         if not self._ma33_is_foreground():
