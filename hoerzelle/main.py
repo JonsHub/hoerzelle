@@ -12,7 +12,7 @@ import maico_handler
 from test_result_gui import EvaluationGUI
 
 def main():
-    paths_dir.ensure_directories_exist
+    """paths_dir.ensure_directories_exist
     max_qr_attempts = 3
     attempt_count = 0
     current_patient_id = None
@@ -35,7 +35,7 @@ def main():
     
     if not current_patient_id:
         print("QR validation failed after max attempts. Exiting.")
-        return False
+        return False"""
     
     start_screen = test_start_gui.PatientStartScreen()
     start_screen.run()
@@ -98,7 +98,7 @@ def main():
 
 def run_kiosk():
     while True:
-        print("System ready. Waiting for patient to scan QR code...")
+        #print("System ready. Waiting for patient to scan QR code...")
         success = main()
         if success:
             print("Patient processed successfully. Waiting for next patient...")
