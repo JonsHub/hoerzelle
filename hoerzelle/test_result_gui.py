@@ -28,9 +28,9 @@ class EvaluationGUI:
         
         self.images_dir = paths_dir.IMAGES_DIR
         self.traffic_light_images = {
-            "red": tk.PhotoImage(file=self.images_dir / "ampel_rot.png"),
-            "yellow": tk.PhotoImage(file=self.images_dir / "ampel_gelb.png"),
-            "green": tk.PhotoImage(file=self.images_dir / "ampel_grün.png"),
+            "red": tk.PhotoImage(master=self.root, file=self.images_dir / "ampel_rot.png"),
+            "yellow": tk.PhotoImage(master=self.root, file=self.images_dir / "ampel_gelb.png"),
+            "green": tk.PhotoImage(master=self.root, file=self.images_dir / "ampel_grün.png"),
         }
         
         self.title_font = tkfont.Font(family="Franklin Gothic Medium", size=22)
@@ -232,7 +232,7 @@ class EvaluationGUI:
         buffer.seek(0)
         
         image = Image.open(buffer)
-        photo = ImageTk.PhotoImage(image)
+        photo = ImageTk.PhotoImage(image, master=self.root)
         
         plt.close()
         buffer.close()

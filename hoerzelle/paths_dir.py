@@ -1,4 +1,5 @@
 from pathlib import Path
+import time
 
 BASE_DIR = Path(__file__).parent
 
@@ -14,7 +15,6 @@ ARCHIVE_DIR = DATA_DIR / "archive"
 JSON_FILE = SAVED_PATIENTS_DIR / "patients.json"
 THRESHOLDS_FILE = DATA_DIR / "evaluation_config.json"
 IN_XML = XML_PORT / "in.xml"
-OUT_XML = XML_PORT / "out.xml"
 
 def ensure_directories_exist():
     directories = [
@@ -39,6 +39,23 @@ def get_latest_test_xml():
     if not xml_files:
         raise FileNotFoundError(f"Keine XML-Dateien in {SAVED_TESTS_DIR}")
     return max(xml_files, key=lambda x: x.stat().st_mtime)
+
+def wait_for_test_xml(started_at: float, timeout: float = 30.0, poll_interval: float = 0.5):
+    """Wait for MAICO to create or update the XML for the current test."""
+    deadline = time.monotonic() + timeout
+    output_file = SAVED_TESTS_DIR / "out.xml"
+
+    while time.monotonic() < deadline:
+        if output_file.is_file():
+            file_stat = output_file.stat()
+            if file_stat.st_mtime > started_at and file_stat.st_size > 0:
+                return output_file
+        time.sleep(poll_interval)
+
+    raise FileNotFoundError(
+        f"Keine neue XML-Datei innerhalb von {timeout:.0f} Sekunden in "
+        f"{SAVED_TESTS_DIR} gefunden"
+    )
 
 def get_all_test_xmls():
     return list(SAVED_TESTS_DIR.glob("*.xml"))

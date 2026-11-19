@@ -35,25 +35,26 @@ def main():
     
     if not current_patient_id:
         print("QR validation failed after max attempts. Exiting.")
-        return False"""
+        return False
     
     start_screen = test_start_gui.PatientStartScreen()
-    start_screen.run()
+    start_screen.run()"""
     time.sleep(0.69)
     fill_in_patient.run_automation()
     
-    hearing_test_automation.runner()
+    test_started_at = time.time()
+    if not hearing_test_automation.runner():
+        return False
     
     with open(paths_dir.THRESHOLDS_FILE, "r", encoding="utf-8") as file:
         config = json.load(file)
     
-    xml_files = list(paths_dir.SAVED_TESTS_DIR.glob("*.xml"))
-    
-    if not xml_files:
-        print("No XML files found in SAVED_TESTS_DIR.")
+    try:
+        xml_path = paths_dir.wait_for_test_xml(test_started_at)
+    except FileNotFoundError as exception:
+        print(f"Keine neue XML-Datei gefunden: {exception}")
         return False
-    
-    xml_path = max(xml_files, key=lambda x: x.stat().st_mtime)
+
     patient_data = test_evaluator.read_patient_xml(xml_path)
     
     results = test_evaluator.evaluate_patient(patient_data, config)
@@ -64,7 +65,7 @@ def main():
     except Exception as e:
         print(f"Warning: Could not generate PDF: {e}")
     
-    gui = EvaluationGUI(
+    """gui = EvaluationGUI(
         left_result=results['left']['color'],
         right_result=results['right']['color'],
         high_freq_warning_left=results['left']['high_freq_warning'],
@@ -93,7 +94,7 @@ def main():
         print(f"Error removing patient from queue: {exception}")
     
     time.sleep(5)
-    maico_handler.restart_maico()
+    maico_handler.restart_maico()"""
     return True
 
 def run_kiosk():

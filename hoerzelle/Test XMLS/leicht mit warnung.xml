@@ -1,8 +1,8 @@
 <patient>
     <idpatient>1000018</idpatient>
-    <datedenaissance>20040216</datedenaissance>
-    <nom>Rahm</nom>
-    <prenom>Jonas</prenom>
+    <datedenaissance>20000101</datedenaissance>
+    <nom>Patient</nom>
+    <prenom>Test</prenom>
     <sexe>1</sexe>
     <audio>
         <test type="manual" ear="left" device="MA33">
