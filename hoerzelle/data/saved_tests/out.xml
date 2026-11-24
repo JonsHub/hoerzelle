@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<patient><idpatient>1000005</idpatient><datedenaissance>20040216</datedenaissance><nom>Rahm</nom><prenom>Jonas</prenom><sexe>1</sexe><dateexamen>20261119225338</dateexamen><audio><test type="hughson westlake" ear="right" device="MA33"><result frequency="1000" volume="0" volumemasking=" "/></test></audio></patient>

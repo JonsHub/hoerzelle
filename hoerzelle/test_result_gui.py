@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 import paths_dir
 import matplotlib
 import matplotlib.pyplot as plt
@@ -6,10 +7,20 @@ import io
 from matplotlib.patches import Polygon
 from tkinter import font as tkfont
 from PIL import Image, ImageTk
+from pathlib import Path
+from typing import Callable, Optional
 
 matplotlib.use('Agg')
 class EvaluationGUI:
-    def __init__(self, left_result, right_result, high_freq_warning_left=False, high_freq_warning_right=False, patient_data=None):
+    def __init__(
+        self,
+        left_result,
+        right_result,
+        high_freq_warning_left=False,
+        high_freq_warning_right=False,
+        patient_data=None,
+        generate_pdf_callback: Optional[Callable[[], Path]] = None,
+    ):
         self.root = tk.Tk()
         self.root.title("Hearing Test Evaluation")
         self.root.configure(bg="black")
@@ -25,6 +36,7 @@ class EvaluationGUI:
         self.high_freq_warning_left = high_freq_warning_left
         self.high_freq_warning_right = high_freq_warning_right
         self.patient_data = patient_data
+        self.generate_pdf_callback = generate_pdf_callback
         
         self.images_dir = paths_dir.IMAGES_DIR
         self.traffic_light_images = {
@@ -137,9 +149,11 @@ class EvaluationGUI:
         
         button_frame = tk.Frame(main_frame, bg="black")
         button_frame.pack(pady=(15, 0))
+        navigation_buttons = tk.Frame(button_frame, bg="black")
+        navigation_buttons.pack()
         
         details_button = tk.Button(
-            button_frame,
+            navigation_buttons,
             text="DETAILS",
             command=self.show_details_screen,
             foreground="black",
@@ -152,7 +166,7 @@ class EvaluationGUI:
         details_button.pack(side=tk.LEFT, padx=15)
         
         exit_button = tk.Button(
-            button_frame,
+            navigation_buttons,
             text="BEENDEN",
             command=self.confirm_exit,
             foreground="black",
@@ -163,6 +177,45 @@ class EvaluationGUI:
             height=2
         )
         exit_button.pack(side=tk.LEFT, padx=15)
+
+        if self.generate_pdf_callback is not None:
+            pdf_button = tk.Button(
+                button_frame,
+                text="PDF ERZEUGEN",
+                command=self.generate_pdf,
+                foreground="white",
+                background="#FF4444",
+                activebackground="#CC0000",
+                font=self.button_font,
+                width=33,
+                height=2
+            )
+            pdf_button.pack(pady=(12, 0))
+
+    def generate_pdf(self):
+        if self.generate_pdf_callback is None:
+            messagebox.showerror(
+                "PDF-Erzeugung fehlgeschlagen",
+                "Die PDF-Erzeugung ist nicht verfügbar.",
+                parent=self.root,
+            )
+            return
+
+        try:
+            pdf_path = self.generate_pdf_callback()
+        except Exception as error:
+            messagebox.showerror(
+                "PDF-Erzeugung fehlgeschlagen",
+                f"Die PDF-Datei konnte nicht erzeugt werden:\n{error}",
+                parent=self.root,
+            )
+            return
+
+        messagebox.showinfo(
+            "PDF erzeugt",
+            f"Die PDF-Datei wurde gespeichert:\n{pdf_path}",
+            parent=self.root,
+        )
     
     def create_audiogram_image_for_tk(self, ear_data, ear_side):
         frequencies = [125, 250, 500, 1000, 2000, 3000, 4000, 6000, 8000]

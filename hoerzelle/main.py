@@ -38,42 +38,46 @@ def main():
         return False
     
     start_screen = test_start_gui.PatientStartScreen()
-    start_screen.run()"""
+    start_screen.run()
     time.sleep(0.69)
     fill_in_patient.run_automation()
     
     test_started_at = time.time()
     if not hearing_test_automation.runner():
         return False
-    
+    """
     with open(paths_dir.THRESHOLDS_FILE, "r", encoding="utf-8") as file:
         config = json.load(file)
-    
-    try:
+    xml_path = paths_dir.get_latest_test_xml()
+    """try:
         xml_path = paths_dir.wait_for_test_xml(test_started_at)
     except FileNotFoundError as exception:
         print(f"Keine neue XML-Datei gefunden: {exception}")
-        return False
+        return False"""
 
     patient_data = test_evaluator.read_patient_xml(xml_path)
     
     results = test_evaluator.evaluate_patient(patient_data, config)
-    
+    """
     try:
         pdf_path = pdf_generator.generate_report_for_patient(xml_path, config)
         print(f"PDF report generated: {pdf_path}")
     except Exception as e:
-        print(f"Warning: Could not generate PDF: {e}")
+        print(f"Warning: Could not generate PDF: {e}")"""
     
-    """gui = EvaluationGUI(
+    gui = EvaluationGUI(
         left_result=results['left']['color'],
         right_result=results['right']['color'],
         high_freq_warning_left=results['left']['high_freq_warning'],
         high_freq_warning_right=results['right']['high_freq_warning'],
-        patient_data=patient_data
+        patient_data=patient_data,
+        generate_pdf_callback=lambda: pdf_generator.generate_report_for_patient(
+            xml_path, config
+        ),
     )
     gui.run()
-    
+
+    """
     try:
         hearing_test_automation.rename_xml_file()
     except Exception as exception:
@@ -98,7 +102,8 @@ def main():
     return True
 
 def run_kiosk():
-    while True:
+    main()
+    """while True:
         #print("System ready. Waiting for patient to scan QR code...")
         success = main()
         if success:
@@ -106,7 +111,7 @@ def run_kiosk():
         else:
             print("Error processing patient. Restart in 5 seconds...")
             time.sleep(5)
-            continue
+            continue"""
 
 if __name__ == "__main__":
     run_kiosk()

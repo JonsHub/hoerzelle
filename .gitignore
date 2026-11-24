@@ -1,2 +1,6 @@
 /hoerzelle/__pycache__
-/hoerzelle/logs
+/hoerzelle/saved_tests
+/hoerzelle/xml_port
+/hoerzelle/archive
+/hoerzelle/images
+/hoerzelle/qr_codes

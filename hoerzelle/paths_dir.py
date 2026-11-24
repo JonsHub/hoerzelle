@@ -9,7 +9,6 @@ SAVED_PATIENTS_DIR = DATA_DIR / "saved_patients"
 SAVED_TESTS_DIR = DATA_DIR / "saved_tests"
 XML_PORT = DATA_DIR / "xml_port"
 IMAGES_DIR = BASE_DIR / "images"
-#LOG_DIR = BASE_DIR / "logs"
 ARCHIVE_DIR = DATA_DIR / "archive"
 
 JSON_FILE = SAVED_PATIENTS_DIR / "patients.json"
@@ -25,7 +24,6 @@ def ensure_directories_exist():
         SAVED_TESTS_DIR,
         XML_PORT,
         IMAGES_DIR,
-        #LOG_DIR
     ]
     for directory in directories:
         if not directory.exists():
